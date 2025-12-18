@@ -17,6 +17,7 @@ This blueprint realigns GIVC Core Academy with the updated **SBS-Centric Medical
   - Coding simulation engine for SBS, ICD-10-AM, AR-DRG tuned to p99 targets: Arabic code search <500ms; API interactions <2s.
 
 ### Frontend (Next.js 14, App Router)
+- **BrainSAIT design system**: bilingual RTL/LTR-compliant tokens and components with accessibility baselines used across web and mobile surfaces.
 - Bilingual (Arabic/English) with RTL/LTR switching; BrainSAIT design tokens for typography, spacing, and components.
 - Compliance-ready UI: consent capture, PHI masking, access logs surfacing, and audit trails per screen.
 - Advanced dashboards: Prometheus/Grafana data surfaces for performance, audit heatmaps, corporate KPIs; Storybook-powered UI catalog kept in sync with BrainSAIT tokens.
