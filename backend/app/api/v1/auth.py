@@ -95,7 +95,8 @@ def login(
         )
     
     # Update last login
-    user.last_login = datetime.utcnow()
+    from datetime import timezone
+    user.last_login = datetime.now(timezone.utc)
     db.commit()
     
     # Create tokens

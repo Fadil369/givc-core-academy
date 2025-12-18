@@ -40,10 +40,12 @@ class Settings(BaseSettings):
     )
     
     # Security
-    SECRET_KEY: str = os.getenv(
-        "SECRET_KEY",
-        "givc-core-academy-secret-key-change-in-production"
-    )
+    SECRET_KEY: str = os.getenv("SECRET_KEY", "")
+    
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        if not self.SECRET_KEY and not self.DEBUG:
+            raise ValueError("SECRET_KEY must be set in production")
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     REFRESH_TOKEN_EXPIRE_DAYS: int = 7
