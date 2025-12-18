@@ -18,7 +18,7 @@ This blueprint realigns GIVC Core Academy with the updated **SBS-Centric Medical
 
 ### Frontend (Next.js 14, App Router)
 - **BrainSAIT design system**: bilingual RTL/LTR-compliant tokens and components with accessibility baselines used across web and mobile surfaces.
-- Bilingual (Arabic/English) with RTL/LTR switching; BrainSAIT design tokens for typography, spacing, and components.
+- Bilingual (Arabic/English) with RTL/LTR switching; typography and spacing honor the design system tokens.
 - Compliance-ready UI: consent capture, PHI masking, access logs surfacing, and audit trails per screen.
 - Advanced dashboards: Prometheus/Grafana data surfaces for performance, audit heatmaps, corporate KPIs; Storybook-powered UI catalog kept in sync with BrainSAIT tokens.
 
@@ -45,8 +45,8 @@ Timeline assumptions:
 - Phases 2-3 may flex by +1-2 weeks to accommodate audit findings.
 1. **Foundations (Week 1-2)**: PostGIS-ready DB layer, Redis Cluster config, JWT+OAuth2+SCFHS ID plumbing, baseline audit logger + CHI hooks.
 2. **Compliance & Data Residency (Week 3-4)**: NCSS hardening, encryption everywhere, immutable audit stream, PHI masking, consent & access logs in UI.
-3. **Feature Completion (Week 5-7)**: SBS v2/v3 migration tools, rehab (Chapter 26) library, corporate billing/LTC, coding simulator tuned to target SLOs (<500ms search p99, <2s API p99).
-4. **Observability & Launch (Week 8)**: Prometheus/Grafana dashboards, Storybook alignment to BrainSAIT tokens, performance tuning to hit target SLOs (<500ms search p99, <2s API p99), UAT with 50 KSA clients.
+3. **Feature Completion (Week 5-7)**: SBS v2/v3 migration tools, rehab (Chapter 26) library, corporate billing/LTC, coding simulator tuned to target SLOs (see Success Criteria).
+4. **Observability & Launch (Week 8)**: Prometheus/Grafana dashboards, Storybook alignment to BrainSAIT tokens, performance tuning to hit target SLOs (see Success Criteria), UAT with 50 KSA clients.
 
 ## Success Criteria
 - Target SLOs (p99): Arabic code search endpoints (e.g., `/api/v1/codes/search`) <500ms; learner/corporate APIs <2s across regions, measured from KSA POPs over TLS under steady-state production load.
