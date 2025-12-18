@@ -1,0 +1,21 @@
+@use 'helpers' as *;
+@use 'brand-config' as *;
+// Create a map of all brand tokens
+$brand-tokens: (
+  primary:   $bcc-primary-color,
+  secondary: $bcc-secondary-color,
+  accent:    $bcc-accent-color,
+  success:   $bcc-success-color,
+  light:     $bcc-light-color,
+  dark:      $bcc-dark-color,
+  saudi:    $bcc-saudi-green,
+  medical:   $bcc-medical-teal,
+  regulatory:$bcc-regulatory-red,
+  radius:    $bcc-border-radius,
+  shadow:    $bcc-box-shadow,
+  font-ar:   $bcc-font-family-ar,
+  font-en:   $bcc-font-family-en,
+  base-fs:   $bcc-base-font-size
+);
+// Emit CSS custom properties
+@include cssvars($brand-tokens);

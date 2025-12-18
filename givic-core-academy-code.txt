@@ -1,0 +1,3739 @@
+1. Fetching the Template
+You can obtain the template in two ways:
+Option A: Git Clone (Recommended)
+bash
+# Clone the repository
+git clone https://github.com/ahmadhuss/ludus-free-premium-ecommerce-template.git
+
+# Navigate into the directory
+cd ludus-free-premium-ecommerce-template
+Option B: Download ZIP
+	•	Go to the GitHub repository: 
+	•	Click "Code" → "Download ZIP"
+	•	Extract the ZIP file to your project directory
+2. Understanding the Template Structure
+After fetching, you'll see this structure:
+text
+ludus-free-premium-ecommerce-template/
+├── HTML/                    # Main HTML files
+│   ├── index.html          # Homepage
+│   ├── index-2.html        # Alternative homepage
+│   ├── index-3.html        # Another homepage variant
+│   ├── about.html
+│   ├── cart.html
+│   ├── checkout.html
+│   ├── product-detail.html
+│   ├── shop-grid-full.html
+│   └── ...40+ HTML files
+├── css/                    # Compiled CSS
+│   ├── app.css            # Orange-Red scheme (default)
+│   ├── app.color2.css     # Carmine-Red scheme
+│   ├── app.color3.css     # Blue scheme
+│   └── ...10 color schemes
+├── scss/                  # Source SCSS files
+│   ├── abstracts/         # Variables, mixins, functions
+│   ├── base/              # Reset, typography, base styles
+│   ├── components/        # Reusable components
+│   ├── layout/            # Layout-specific styles
+│   ├── pages/             # Page-specific styles
+│   └── utility.scss       # Utility classes
+├── js/                    # JavaScript files
+│   ├── app.js
+│   ├── vendor/            # Third-party libraries
+│   └── modules/           # Custom modules
+├── images/                # Image assets
+├── webfonts/              # Font files
+└── video/                 # Video assets (if any)
+3. Integration Approaches
+Approach 1: Simple Static Integration
+If you just need to use the template as-is:
+	1	Copy HTML files to your project's public/ or static/ folder
+	2	Copy CSS files to your assets/css/ folder
+	3	Update file paths in HTML files: html  <!-- Change from: -->
+	4	<link rel="stylesheet" href="css/app.css">
+	5	<!-- To: -->
+	6	<link rel="stylesheet" href="/assets/css/app.css"> 
+	7	Update JavaScript paths similarly
+Approach 2: SCSS Integration (Recommended for Customization)
+If your build system supports SCSS:
+	1	Copy the scss/ folder to your project's src/styles/ directory
+	2	Import SCSS components in your main SCSS file: scss  // src/styles/main.scss
+	3	@import './scss/abstracts/variables';
+	4	@import './scss/abstracts/mixins';
+	5	@import './scss/base/reset';
+	6	@import './scss/components/button';
+	7	@import './scss/components/card';
+	8	// ... import other components as needed 
+	9	Configure your build tool to compile SCSS
+Approach 3: Framework Integration (React/Vue/Angular)
+For component-based frameworks:
+React Example:
+jsx
+// components/ProductCard.jsx
+import './ProductCard.scss'; // Import corresponding SCSS
+
+function ProductCard({ product }) {
+  return (
+    <div className="product-card">
+      <div className="product-card__img">
+        <img src={product.image} alt={product.name} />
+      </div>
+      <div className="product-card__body">
+        <h3 className="product-card__title">{product.name}</h3>
+        <div className="product-card__price">${product.price}</div>
+        <button className="btn btn--primary">Add to Cart</button>
+      </div>
+    </div>
+  );
+}
+Copy relevant SCSS components to your component folders and import them locally.
+4. Build System Configurations
+Webpack Configuration
+javascript
+// webpack.config.js
+module.exports = {
+  module: {
+    rules: [
+      {
+        test: /\.scss$/,
+        use: [
+          'style-loader',
+          'css-loader',
+          {
+            loader: 'sass-loader',
+            options: {
+              // Additional SCSS imports
+              additionalData: `@import "@/styles/scss/abstracts/variables.scss";`
+            }
+          }
+        ]
+      },
+      {
+        test: /\.(png|jpg|gif|svg)$/,
+        type: 'asset/resource',
+        generator: {
+          filename: 'images/[hash][ext][query]'
+        }
+      },
+      {
+        test: /\.(woff|woff2|eot|ttf)$/,
+        type: 'asset/resource',
+        generator: {
+          filename: 'fonts/[hash][ext][query]'
+        }
+      }
+    ]
+  }
+};
+Vite Configuration
+javascript
+// vite.config.js
+export default {
+  css: {
+    preprocessorOptions: {
+      scss: {
+        additionalData: `@import "./src/styles/scss/abstracts/_variables.scss";`
+      }
+    }
+  },
+  build: {
+    assetsDir: 'assets',
+    rollupOptions: {
+      input: {
+        main: 'index.html',
+        about: 'about.html',
+        // ... other HTML entries
+      }
+    }
+  }
+};
+Gulp Configuration
+javascript
+// gulpfile.js
+const gulp = require('gulp');
+const sass = require('gulp-sass')(require('sass'));
+
+// Compile SCSS
+gulp.task('styles', () => {
+  return gulp.src('src/styles/**/*.scss')
+    .pipe(sass().on('error', sass.logError))
+    .pipe(gulp.dest('dist/css'));
+});
+
+// Copy HTML files
+gulp.task('html', () => {
+  return gulp.src('HTML/**/*.html')
+    .pipe(gulp.dest('dist'));
+});
+
+// Copy images and fonts
+gulp.task('assets', () => {
+  return gulp.src(['images/**/*', 'webfonts/**/*'], { base: '.' })
+    .pipe(gulp.dest('dist'));
+});
+
+// Default task
+gulp.task('default', gulp.parallel('styles', 'html', 'assets'));
+npm Scripts
+json
+{
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "build:css": "sass scss/:css/ --style compressed",
+    "watch:css": "sass --watch scss/:css/",
+    "copy:html": "cp -r HTML/ dist/",
+    "copy:assets": "cp -r images/ webfonts/ js/ dist/"
+  }
+}
+5. Specific Integration Steps
+Step 1: Organize Your Project Structure
+text
+your-project/
+├── src/
+│   ├── styles/
+│   │   ├── scss/           # Copied from template
+│   │   │   ├── abstracts/
+│   │   │   ├── base/
+│   │   │   ├── components/
+│   │   │   └── ...
+│   │   └── main.scss       # Your main SCSS file
+│   ├── assets/
+│   │   ├── images/         # Copied from template
+│   │   ├── fonts/          # Copied from template
+│   │   └── js/             # Copied from template
+│   └── templates/          # HTML templates
+│       ├── index.html
+│       ├── about.html
+│       └── ...
+├── package.json
+└── build configuration
+Step 2: Update Paths in HTML Files
+html
+<!-- Before: -->
+<link rel="stylesheet" href="css/app.css">
+<script src="js/app.js"></script>
+
+<!-- After (for build systems): -->
+<link rel="stylesheet" href="{{ asset_path }}/css/app.css">
+<script src="{{ asset_path }}/js/app.js"></script>
+
+<!-- After (for static deployment): -->
+<link rel="stylesheet" href="/assets/css/app.css">
+<script src="/assets/js/app.js" defer></script>
+Step 3: Customize Color Schemes
+The template includes 10 color schemes. To use a different one:
+html
+<!-- Change from: -->
+<link rel="stylesheet" href="css/app.css">
+
+<!-- To (for blue scheme): -->
+<link rel="stylesheet" href="css/app.color3.css">
+Or customize in SCSS:
+scss
+// src/styles/scss/abstracts/_variables.scss
+$primary-color: #2c5aa0; // Yale Blue
+$secondary-color: #f8b500; // Amber
+// ... override other variables
+Step 4: JavaScript Integration
+javascript
+// If using module system
+import './js/modules/cart';
+import './js/modules/wishlist';
+
+// If using global scripts
+// Copy js/ folder to your assets and include in HTML
+6. Best Practices for Integration
+	1	Start with one component at a time - Integrate the header/first, then product cards, etc.
+	2	Use CSS naming conventions - The template uses BEM-like syntax (.block__element--modifier)
+	3	Test responsiveness - The template is fully responsive, but verify on your target devices
+	4	Optimize images - Compress images from the images/ folder
+	5	Bundle JavaScript - Combine and minify JS files for production
+	6	Implement caching - Set cache headers for CSS/JS assets
+7. Troubleshooting Common Issues
+
+
+Issue
+Solution
+Styles not loading
+Check path references in HTML; ensure build process copies CSS
+SCSS compilation errors
+Verify all SCSS partials are imported correctly
+JavaScript not working
+Check console for errors; ensure JS files are loaded in correct order
+Images not displaying
+Update image paths; ensure images are copied to build directory
+Fonts not loading
+Check font-face declarations in CSS; verify font files are accessible
+8. Next Steps After Integration
+	1	Customize the design - Modify SCSS variables to match your brand
+	2	Add interactivity - Enhance with your preferred JavaScript framework
+	3	Connect to backend - Replace static data with API calls
+	4	Optimize performance - Implement lazy loading, code splitting
+	5	Add analytics - Integrate tracking for user behavior
+Would you like specific guidance for your particular build system (Webpack, Vite, Gulp, etc.) or framework (React, Vue, Angular)?
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Customize the design - Modify SCSS variables to match BRAINSAIT-GIVC-CORE-CODE brand
+
+Add interactivity - Enhance with your preferred JavaScript framework
+
+Connect to backend - Replace static data with API calls
+
+Optimize performance - Implement lazy loading, code splitting
+
+Add analytics - Integrate tracking for user behavior
+
+
+
+
+
+
+
+
+
+Read 8 web pages
+
+Hmm, the user is continuing from our previous conversation where we set up a full medical coding training platform. Now they want to implement five specific technical features to enhance and optimize that platform. This is a substantial technical implementation request that builds on our earlier architecture work.
+The user is clearly planning a professional production deployment and wants to take their platform from basic functionality to a fully featured, high-performance system. They're asking for specific solutions across multiple technical domains: design customization with brand consistency, JavaScript framework enhancement, backend API integration, performance optimization, and analytics implementation.
+I need to provide concrete, actionable implementation code and strategies for each of these five areas, while ensuring they integrate well with the medical coding training platform architecture we've already designed. The focus should be on practical implementation details rather than theoretical explanations.
+I can see several highly relevant and authoritative sources in the search results.  provides exactly the SCSS architecture strategy we need for theme management, offering a robust pattern with getters and setters for CSS custom properties.  and  offer complementary perspectives on lazy loading -  focuses on React-specific implementation with excellent code examples, while  from MDN provides broader web standards coverage.  from Google's official documentation gives authoritative guidance on GA4 ecommerce tracking implementation.  provides a comprehensive comparison of lazy loading vs code splitting with performance metrics.
+ about Ludus templates and  about static vs dynamic content don't seem directly relevant to the user's specific questions about JavaScript frameworks, SCSS customization, or analytics integration.  focuses on WordPress plugins which doesn't align with our custom React/backend architecture.
+The technical approach will be to provide complete, ready-to-use code solutions for each of the five areas, showing exactly how they integrate into our existing platform. For design customization, I can adapt 's pattern for the BRAINSAIT-GIVC-CORE-CODE brand. For interactivity and backend connectivity, I can build on the existing FastAPI/React setup we've already designed. For lazy loading and code splitting, I can combine  and  approaches to create a comprehensive solution. For analytics, I can implement 's GA4 ecommerce events specifically for medical coding training enrollment.
+Since this covers five distinct technical areas, I'll organize it in a clear table format first to show the implementation approach for each requirement, then provide the detailed code implementations. The table will help the user quickly understand how each feature maps to our platform and what the benefits are.
+I should also include practical considerations about the combined impact of these optimizations, drawing on the performance metrics from  that shows up to 40% improvement when combining lazy loading and code splitting. The response needs to be highly technical and implementation-focused since the user clearly wants production-ready code.
+
+Here is a comprehensive implementation guide for enhancing your medical coding training platform with brand customization, modern interactivity, and performance optimizations, building directly on the architecture we previously established.
+🎨 1. Customize the Design with SCSS & CSS Custom Properties
+This approach uses a scalable SCSS architecture for your brand theme. The system defines CSS Custom Properties (variables) for the BRAINSAIT-GIVC-CORE-CODE brand, allowing easy switching between SBS versions or user modes.
+Implementation:
+	1	Create a brand configuration file (src/styles/scss/abstracts/_brand-config.scss): scss  // BRAINSAIT-GIVC-CORE-CODE Brand Theme
+	2	$brand-prefix: bcc; // BrainSait Core Code prefix
+	3	
+	4	// Core Brand Colors (Primary: Deep Blue - Knowledge & Trust)
+	5	$bcc-primary-color: #0a2463;
+	6	$bcc-secondary-color: #00b4d8; // Cyan for interactivity
+	7	$bcc-accent-color: #ff6b35; // Orange for CTAs & warnings
+	8	$bcc-success-color: #2a9d8f; // Green for completion/success
+	9	$bcc-light-color: #f8f9fa;
+	10	$bcc-dark-color: #212529;
+	11	
+	12	// Saudi & Medical Theme Colors
+	13	$bcc-saudi-green: #006c35;
+	14	$bcc-medical-teal: #20a4f3;
+	15	$bcc-regulatory-red: #e63946; // For CHI/MOH compliance highlights
+	16	
+	17	// Typography
+	18	$bcc-font-family-ar: 'Cairo', 'Arial', sans-serif;
+	19	$bcc-font-family-en: 'Inter', 'Helvetica Neue', sans-serif;
+	20	$bcc-base-font-size: 16px;
+	21	
+	22	// Spacing & Borders
+	23	$bcc-border-radius: 8px;
+	24	$bcc-box-shadow: 0 4px 12px rgba(10, 36, 99, 0.1); 
+	25	Implement SCSS helpers for managing variables: scss  // src/styles/scss/abstracts/_helpers.scss
+	26	// SETTER: Declare a set of CSS Custom Properties
+	27	@mixin cssvars($css-variables, $prefix: $brand-prefix) {
+	28	  :root {
+	29	    @each $name, $value in $css-variables {
+	30	      --#{$prefix}-#{$name}: #{$value};
+	31	    }
+	32	  }
+	33	}
+	34	// GETTER: Retrieve a CSS variable
+	35	@function cssvar($name, $prefix: $brand-prefix) {
+	36	  @return var(--#{$prefix}-#{$name});
+	37	} 
+	38	Define the main theme using the helpers: scss  // src/styles/scss/abstracts/_theme.scss
+	39	@import 'brand-config', 'helpers';
+	40	
+	41	// Declare all theme variables as CSS Custom Properties
+	42	@include cssvars((
+	43	  primary-color: $bcc-primary-color,
+	44	  secondary-color: $bcc-secondary-color,
+	45	  accent-color: $bcc-accent-color,
+	46	  success-color: $bcc-success-color,
+	47	  saudi-green: $bcc-saudi-green,
+	48	  font-family-ar: $bcc-font-family-ar,
+	49	  font-family-en: $bcc-font-family-en,
+	50	  border-radius: $bcc-border-radius,
+	51	  box-shadow: $bcc-box-shadow,
+	52	));
+	53	
+	54	// Optional: Theme for SBS Version context (e.g., V2 vs V3)
+	55	.theme-sbs-v2 {
+	56	  @include cssvars((accent-color: #ff9e00), $prefix: bcc); // Orange accent for V2
+	57	}
+	58	.theme-sbs-v3 {
+	59	  @include cssvars((accent-color: #7209b7), $prefix: bcc); // Purple accent for V3
+	60	} 
+	61	Use variables in components: scss  // src/styles/scss/components/_button.scss
+	62	.btn-primary {
+	63	  background-color: cssvar(primary-color);
+	64	  color: white;
+	65	  font-family: cssvar(font-family-en);
+	66	  border-radius: cssvar(border-radius);
+	67	  border: none;
+	68	  padding: 12px 24px;
+	69	
+	70	  &:hover {
+	71	    background-color: cssvar(secondary-color);
+	72	    box-shadow: cssvar(box-shadow);
+	73	  }
+	74	
+	75	  &--saudi {
+	76	    // Override for Saudi-specific elements
+	77	    background-color: cssvar(saudi-green);
+	78	  }
+	79	} 
+⚛️ 2. Add Interactivity with React & State Management
+Enhance the static template with React for a dynamic, app-like user experience, especially for the coding simulator and user dashboard.
+Implementation (Coding Simulator Component):
+jsx
+// src/components/simulator/SBSInteractiveCoder.jsx
+import React, { useState, useEffect } from 'react';
+import { useAuth } from '../../hooks/useAuth';
+import api from '../../services/api';
+
+const SBSInteractiveCoder = ({ caseId, sbsVersion = '2.0' }) => {
+  const { user } = useAuth();
+  const [medicalCase, setMedicalCase] = useState(null);
+  const [userCode, setUserCode] = useState('');
+  const [validationResult, setValidationResult] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  // Fetch Saudi medical case from backend
+  useEffect(() => {
+    const fetchCase = async () => {
+      const response = await api.get(`/api/saudi-cases/${caseId}`, {
+        params: { region: user?.region || 'Riyadh', version: sbsVersion }
+      });
+      setMedicalCase(response.data);
+    };
+    fetchCase();
+  }, [caseId, sbsVersion, user]);
+
+  const validateCode = async () => {
+    setIsLoading(true);
+    try {
+      // Call backend SBS validation engine
+      const result = await api.post('/api/sbs/validate', {
+        sbsCode: userCode,
+        medicalRecord: medicalCase.record,
+        demographics: { region: user.region, nationality: user.nationality }
+      });
+      setValidationResult(result.data);
+
+      // Log analytics event for training progress
+      if (result.data.complianceScore > 80) {
+        logAnalyticsEvent('coding_exercise_completed', {
+          score: result.data.complianceScore,
+          case_difficulty: medicalCase.difficulty
+        });
+      }
+    } catch (error) {
+      console.error('Validation failed:', error);
+    }
+    setIsLoading(false);
+  };
+
+  return (
+    <div className="simulator-container" dir={medicalCase?.language === 'ar' ? 'rtl' : 'ltr'}>
+      <div className="case-display">
+        <h3>{medicalCase?.title}</h3>
+        <p className="case-text">{medicalCase?.description}</p>
+        <div className="sbs-reference">
+          <strong>Expected SBS {sbsVersion} Code:</strong>
+          <code>{medicalCase?.expectedCode}</code>
+        </div>
+      </div>
+
+      <div className="coding-interface">
+        <input
+          type="text"
+          value={userCode}
+          onChange={(e) => setUserCode(e.target.value.toUpperCase())}
+          placeholder="Enter SBS Code (e.g., 34512-01-00)"
+          className="code-input"
+        />
+        <button onClick={validateCode} disabled={isLoading} className="btn-primary">
+          {isLoading ? 'Validating...' : 'Validate Code'}
+        </button>
+      </div>
+
+      {validationResult && (
+        <div className={`validation-result ${validationResult.isValid ? 'valid' : 'invalid'}`}>
+          <h4>Validation Result</h4>
+          <p>Compliance Score: <strong>{validationResult.complianceScore}%</strong></p>
+          <p>{validationResult.arabicExplanation}</p>
+          {validationResult.errors?.map((err, idx) => (
+            <p key={idx} className="error">⚠️ {err}</p>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default SBSInteractiveCoder;
+🔗 3. Connect to Backend API
+Replace all static data with dynamic API calls to your FastAPI backend. Use a centralized service for API communication.
+Implementation (API Service):
+javascript
+// src/services/api.js
+import axios from 'axios';
+
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+
+const api = axios.create({
+  baseURL: API_BASE_URL,
+  headers: {
+    'Content-Type': 'application/json',
+    'Accept-Language': localStorage.getItem('preferred_language') || 'en'
+  }
+});
+
+// Request interceptor to add auth token
+api.interceptors.request.use(config => {
+  const token = localStorage.getItem('access_token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
+// SBS-specific API methods
+export const sbsApi = {
+  // Get SBS code details
+  getCode: (sbsCode, version) =>
+    api.get(`/api/v1/sbs/codes/${sbsCode}`, { params: { version } }),
+
+  // Validate coding against Saudi medical case
+  validateCoding: (validationRequest) =>
+    api.post('/api/v1/sbs/validate', validationRequest),
+
+  // Get recommended learning path (AI-powered)
+  getLearningPath: (userId) =>
+    api.get(`/api/v1/adaptive-learning/path/${userId}`),
+
+  // Submit enrollment for CCP-KSA course
+  enrollCourse: (enrollmentData) =>
+    api.post('/api/v1/enrollments', enrollmentData),
+
+  // CHI Audit simulation
+  simulateAudit: (auditConfig) =>
+    api.post('/api/v1/audit/simulate', auditConfig),
+};
+
+export const userApi = {
+  login: (credentials) => api.post('/api/v1/auth/login', credentials),
+  register: (userData) => api.post('/api/v1/auth/register', userData),
+  getProfile: () => api.get('/api/v1/users/me'),
+  updateLearningProfile: (profile) => api.put('/api/v1/users/learning-profile', profile),
+};
+
+export default api;
+⚡ 4. Optimize Performance with Lazy Loading & Code Splitting
+Use React.lazy and Suspense to split your application based on routes and components. This ensures users only download the code they need.
+Implementation (Route-based Code Splitting):
+jsx
+// src/App.jsx
+import React, { lazy, Suspense } from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { AuthProvider } from './contexts/AuthContext';
+import MainLayout from './layouts/MainLayout';
+import LoadingSpinner from './components/common/LoadingSpinner';
+
+// Lazy load main sections
+const HomePage = lazy(() => import('./pages/HomePage'));
+const SBSSimulator = lazy(() => import('./pages/SBSSimulator'));
+const CourseCatalog = lazy(() => import('./pages/CourseCatalog'));
+const UserDashboard = lazy(() => import('./pages/UserDashboard'));
+const AdminPanel = lazy(() => import('./pages/AdminPanel')); // Heavy admin bundle
+const RehabilitationModule = lazy(() => import('./pages/RehabilitationModule')); // SBS V3.0 Chapter 26
+
+function App() {
+  return (
+    <BrowserRouter>
+      <AuthProvider>
+        <MainLayout>
+          <Suspense fallback={<LoadingSpinner message="Loading BRAINSAIT Learning Platform..." />}>
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/simulator" element={<SBSSimulator />} />
+              <Route path="/courses" element={<CourseCatalog />} />
+              <Route path="/dashboard" element={<UserDashboard />} />
+              <Route path="/rehabilitation" element={<RehabilitationModule />} />
+              {/* Admin routes - loaded only for admin users */}
+              <Route path="/admin/*" element={<AdminPanel />} />
+            </Routes>
+          </Suspense>
+        </MainLayout>
+      </AuthProvider>
+    </BrowserRouter>
+  );
+}
+
+export default App;
+Component-level lazy loading for heavy modules:
+jsx
+// Inside SBSSimulator.jsx - lazy load heavy 3D anatomy viewer only when needed
+const AnatomyViewer = lazy(() => import('../components/simulator/AnatomyViewer'));
+
+const SBSSimulator = () => {
+  const [showAnatomyViewer, setShowAnatomyViewer] = useState(false);
+
+  return (
+    <div>
+      <button onClick={() => setShowAnatomyViewer(true)}>
+        Show 3D Anatomy Viewer
+      </button>
+      {showAnatomyViewer && (
+        <Suspense fallback={<div>Loading 3D viewer...</div>}>
+          <AnatomyViewer />
+        </Suspense>
+      )}
+    </div>
+  );
+};
+Image lazy loading (native browser support):
+jsx
+// For Saudi medical reference images
+<img
+  loading="lazy"
+  src="/api/medical-images/saudi-case-123.jpg"
+  alt="Saudi medical case reference"
+  width="800"
+  height="600"
+/>
+📊 5. Add Analytics for User Behavior Tracking
+Implement Google Analytics 4 (GA4) with custom ecommerce events to track enrollment, coding exercises, and certification progress.
+Implementation (Analytics Service):
+javascript
+// src/services/analytics.js
+class AnalyticsService {
+  constructor() {
+    this.GA_MEASUREMENT_ID = process.env.REACT_APP_GA_MEASUREMENT_ID;
+    this.initGA();
+  }
+
+  initGA() {
+    // Initialize Google Analytics
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', this.GA_MEASUREMENT_ID);
+  }
+
+  // Track page views
+  trackPageView(pageTitle, pagePath) {
+    gtag('event', 'page_view', {
+      page_title: pageTitle,
+      page_path: pagePath,
+      platform: 'medical_coding_training'
+    });
+  }
+
+  // Track ecommerce events for course enrollment[citation:5]
+  trackEnrollment(enrollmentData) {
+    gtag('event', 'begin_checkout', {
+      currency: 'SAR',
+      value: enrollmentData.total_amount,
+      items: enrollmentData.items.map(item => ({
+        item_id: item.course_id,
+        item_name: item.course_name,
+        item_category: 'Medical_Coding_Course',
+        price: item.price,
+        quantity: 1
+      }))
+    });
+  }
+
+  // Track coding exercise completion
+  trackCodingExercise(caseId, score, sbsVersion) {
+    gtag('event', 'coding_exercise_completed', {
+      case_id: caseId,
+      score: score,
+      sbs_version: sbsVersion,
+      engagement_time_msec: 10000 // Example engagement time
+    });
+  }
+
+  // Track certification achievement
+  trackCertification(certType, userId) {
+    gtag('event', 'earn_virtual_currency', {
+      virtual_currency_name: certType, // e.g., "CCP-KSA", "CCC"
+      value: 1
+    });
+  }
+}
+
+export default new AnalyticsService();
+Integration with React components:
+jsx
+// In a course enrollment component
+import analytics from '../services/analytics';
+
+const CourseEnrollment = ({ course }) => {
+  const handleEnroll = async () => {
+    // API call to enroll
+    const result = await enrollApi.enrollCourse(course.id);
+
+    // Track enrollment event
+    analytics.trackEnrollment({
+      items: [{
+        course_id: course.id,
+        course_name: course.title,
+        price: course.price
+      }],
+      total_amount: course.price
+    });
+
+    // Mark as key conversion event in GA4[citation:5]
+    gtag('event', 'purchase', {
+      transaction_id: result.enrollment_id,
+      value: course.price,
+      currency: 'SAR'
+    });
+  };
+
+  return <button onClick={handleEnroll}>Enroll Now</button>;
+};
+Summary of Implementation Strategy
+The table below outlines the core implementation strategy for each of the five features.
+
+
+Feature
+Core Approach
+Key Benefit for Medical Coding Platform
+SCSS Branding
+CSS Custom Properties with SCSS getters/setters
+Centralized theming for SBS V2/V3 visual modes
+React Interactivity
+Component-based state management & API integration
+Dynamic coding simulator with real-time validation
+Backend Connectivity
+Axios service layer with interceptors
+Live SBS code validation & user progress sync
+Performance
+React.lazy + Suspense + native loading="lazy"
+Fast loading for heavy modules (3D viewer, admin panel)
+Analytics
+GA4 ecommerce events with custom parameters
+Track enrollment, exercise completion, certification
+By implementing these five enhancements, you transform the static Ludus template into a dynamic, high-performance medical coding training platform tailored for the Saudi market.
+I hope this detailed implementation guide helps you build a robust platform. Would you like me to elaborate on any specific area, such as the CHI audit simulation logic or the AI-powered adaptive learning path algorithm?
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+BOTH PLEASE  the CHI audit simulation logic AND the AI-powered adaptive learning path algorithm
+
+
+
+
+
+
+
+
+
+Hmm, the user wants deep technical details on two of the most sophisticated components we mentioned - the CHI audit simulation logic and the AI-powered adaptive learning algorithm. These are complex systems that require careful architectural design.
+I recall we previously established a robust backend architecture with FastAPI and PostgreSQL. Now I need to provide concrete, production-ready implementations for these two systems. The CHI audit system needs to simulate real regulatory audits with risk-based sampling and scoring, while the adaptive learning algorithm should personalize learning paths based on multiple learner dimensions.
+I can structure this as two comprehensive implementations. For the CHI audit, I should cover the audit framework, sampling logic, scoring system, and corrective actions. For the adaptive learning, I need to include the recommendation engine, clustering approach, and progress prediction. Both should integrate with our existing SBS coding standards and Saudi regulatory context.
+I should present these as complete, ready-to-implement modules with clear code examples and architectural diagrams. The response needs to balance technical depth with practical implementation guidance. I will organize it into clear sections for each system with proper database schemas, API endpoints, and business logic.
+
+Comprehensive Implementation: CHI Audit Simulation & AI-Powered Adaptive Learning
+Part 1: CHI Audit Simulation Logic
+1.1 Architecture Overview
+The CHI Audit Simulation System implements the official CHI Coding Audit Governance Framework with risk-based sampling, automated scoring, and corrective action plan generation.
+python
+# backend/app/services/chi_audit_simulator.py
+from typing import Dict, List, Optional, Tuple
+from datetime import datetime, timedelta
+from dataclasses import dataclass
+from enum import Enum
+import numpy as np
+from sqlalchemy.ext.asyncio import AsyncSession
+from app.models.audit import (
+    AuditFramework, AuditSample, AuditFinding, 
+    CorrectiveActionPlan, ProviderProfile
+)
+
+class AuditRiskLevel(str, Enum):
+    LOW = "low"           # Compliance score > 90%
+    MEDIUM = "medium"     # Compliance score 75-90%
+    HIGH = "high"         # Compliance score < 75%
+    CRITICAL = "critical" # Evidence of systematic fraud
+
+@dataclass
+class AuditConfiguration:
+    """CHI Audit Framework Configuration"""
+    provider_id: str
+    audit_period: Tuple[datetime, datetime]  # Start and end dates
+    sample_size: int = 100                   # Default sample size
+    risk_based_sampling: bool = True
+    focus_areas: List[str] = None            # e.g., ["rehabilitation", "bilateral_procedures"]
+    region: str = "Riyadh"
+    sbs_version: str = "2.0"
+
+class CHIAuditSimulator:
+    """
+    Complete CHI Audit Simulation Engine implementing:
+    - Risk-Based Sampling Methodology
+    - Error Scoring per CHI Framework
+    - Corrective Action Plan Generation
+    - Arabic/English Audit Reporting
+    """
+    
+    def __init__(self, db_session: AsyncSession):
+        self.db = db_session
+        self.risk_weights = self._load_risk_weights()
+        
+    async def simulate_full_audit(
+        self, 
+        config: AuditConfiguration
+    ) -> Dict:
+        """
+        Execute complete CHI audit simulation
+        """
+        audit_id = f"CHI-AUDIT-{datetime.now().strftime('%Y%m%d')}-{config.provider_id[:8]}"
+        
+        # 1. RISK ASSESSMENT: Calculate provider risk profile
+        risk_profile = await self._assess_provider_risk(config.provider_id)
+        
+        # 2. SAMPLING: Generate risk-based sample
+        sample_cases = await self._generate_audit_sample(config, risk_profile)
+        
+        # 3. VALIDATION: Audit each case against SBSCS
+        audit_results = []
+        total_penalty_points = 0
+        
+        for case in sample_cases:
+            case_result = await self._audit_single_case(case, config.sbs_version)
+            audit_results.append(case_result)
+            total_penalty_points += case_result["penalty_points"]
+            
+            # Real-time fraud detection
+            if await self._detect_potential_fraud(case_result):
+                await self._flag_for_immediate_review(case_result, audit_id)
+        
+        # 4. SCORING: Calculate compliance score (0-100)
+        compliance_score = self._calculate_compliance_score(
+            total_penalty_points, len(sample_cases)
+        )
+        
+        # 5. DETERMINE AUDIT OUTCOME
+        audit_outcome = self._determine_audit_outcome(compliance_score, audit_results)
+        
+        # 6. GENERATE CORRECTIVE ACTION PLAN
+        corrective_actions = await self._generate_corrective_actions(
+            audit_results, compliance_score, config.provider_id
+        )
+        
+        # 7. CREATE AUDIT REPORT (Arabic/English)
+        audit_report = self._generate_audit_report(
+            audit_id, config, audit_results, compliance_score, 
+            corrective_actions, audit_outcome
+        )
+        
+        return {
+            "audit_id": audit_id,
+            "audit_date": datetime.now().isoformat(),
+            "provider_id": config.provider_id,
+            "compliance_score": compliance_score,
+            "risk_level": risk_profile["overall_risk"],
+            "audit_outcome": audit_outcome,
+            "sample_size": len(sample_cases),
+            "total_errors": len([r for r in audit_results if r["has_errors"]]),
+            "penalty_summary": self._summarize_penalties(audit_results),
+            "corrective_actions": corrective_actions,
+            "arabic_report": audit_report["arabic"],
+            "english_report": audit_report["english"],
+            "next_steps": self._determine_next_steps(audit_outcome, compliance_score)
+        }
+    
+    async def _assess_provider_risk(self, provider_id: str) -> Dict:
+        """
+        Calculate provider risk score based on historical data and patterns
+        """
+        risk_factors = {}
+        
+        # Factor 1: Historical compliance
+        historical_audits = await self._get_historical_audits(provider_id)
+        risk_factors["historical_compliance"] = self._calculate_historical_risk(
+            historical_audits
+        )
+        
+        # Factor 2: Coding pattern anomalies
+        coding_patterns = await self._analyze_coding_patterns(provider_id)
+        risk_factors["pattern_anomalies"] = self._detect_anomalies(coding_patterns)
+        
+        # Factor 3: Unlisted code usage (high risk per CHI)
+        unlisted_ratio = await self._calculate_unlisted_code_ratio(provider_id)
+        risk_factors["unlisted_code_risk"] = self._calculate_unlisted_risk(unlisted_ratio)
+        
+        # Factor 4: Rapid revenue growth (potential upcoding indicator)
+        revenue_trend = await self._analyze_revenue_trend(provider_id)
+        risk_factors["revenue_growth_risk"] = self._assess_revenue_risk(revenue_trend)
+        
+        # Factor 5: Peer comparison
+        peer_benchmark = await self._compare_to_peers(provider_id)
+        risk_factors["peer_deviation"] = self._calculate_peer_deviation(peer_benchmark)
+        
+        # Calculate overall risk score (0-100)
+        overall_risk = self._calculate_overall_risk(risk_factors)
+        
+        return {
+            "risk_factors": risk_factors,
+            "overall_risk_score": overall_risk,
+            "overall_risk": self._map_risk_level(overall_risk),
+            "high_risk_areas": self._identify_high_risk_areas(risk_factors)
+        }
+    
+    async def _generate_audit_sample(
+        self, 
+        config: AuditConfiguration, 
+        risk_profile: Dict
+    ) -> List[Dict]:
+        """
+        Generate risk-based audit sample using CHI sampling methodology
+        """
+        # Base sample from claims database
+        all_claims = await self._get_claims_for_period(
+            config.provider_id, config.audit_period
+        )
+        
+        if not config.risk_based_sampling:
+            # Simple random sample
+            return np.random.choice(
+                all_claims, 
+                size=min(config.sample_size, len(all_claims)), 
+                replace=False
+            ).tolist()
+        
+        # RISK-BASED SAMPLING ALGORITHM
+        weighted_sample = []
+        
+        # 1. High-value claims oversampling (claims > 10,000 SAR)
+        high_value_claims = [c for c in all_claims if c["amount"] > 10000]
+        if high_value_claims:
+            weighted_sample.extend(
+                np.random.choice(
+                    high_value_claims,
+                    size=int(config.sample_size * 0.3),  # 30% of sample
+                    replace=False
+                ).tolist()
+            )
+        
+        # 2. Focus area sampling (e.g., rehabilitation, bilateral procedures)
+        if config.focus_areas:
+            for focus_area in config.focus_areas:
+                focus_claims = await self._get_claims_by_focus_area(
+                    all_claims, focus_area
+                )
+                if focus_claims:
+                    weighted_sample.extend(
+                        np.random.choice(
+                            focus_claims,
+                            size=int(config.sample_size * 0.2 / len(config.focus_areas)),
+                            replace=False
+                        ).tolist()
+                    )
+        
+        # 3. High-risk procedure sampling (from risk profile)
+        high_risk_areas = risk_profile.get("high_risk_areas", [])
+        for risk_area in high_risk_areas:
+            risk_claims = await self._get_claims_by_risk_pattern(
+                all_claims, risk_area
+            )
+            if risk_claims:
+                weighted_sample.extend(
+                    np.random.choice(
+                        risk_claims,
+                        size=int(config.sample_size * 0.25 / len(high_risk_areas)),
+                        replace=False
+                    ).tolist()
+                )
+        
+        # 4. Random sample for remaining
+        remaining_slots = config.sample_size - len(weighted_sample)
+        if remaining_slots > 0:
+            remaining_claims = [c for c in all_claims if c not in weighted_sample]
+            if remaining_claims:
+                weighted_sample.extend(
+                    np.random.choice(
+                        remaining_claims,
+                        size=min(remaining_slots, len(remaining_claims)),
+                        replace=False
+                    ).tolist()
+                )
+        
+        return weighted_sample[:config.sample_size]
+    
+    async def _audit_single_case(
+        self, 
+        claim: Dict, 
+        sbs_version: str
+    ) -> Dict:
+        """
+        Audit a single medical claim against SBSCS standards
+        """
+        errors = []
+        penalty_points = 0
+        severity_weights = {"low": 1, "medium": 3, "high": 5, "critical": 10}
+        
+        # VALIDATION 1: Code exists in SBS version
+        code_validation = await self._validate_sbs_code_exists(
+            claim["sbs_code"], sbs_version
+        )
+        if not code_validation["is_valid"]:
+            errors.append({
+                "code": "SBS001",
+                "description_ar": "الكود غير موجود في نظام الفوترة السعودي",
+                "description_en": "Code does not exist in Saudi Billing System",
+                "severity": "critical",
+                "penalty_points": 10
+            })
+            penalty_points += 10
+        
+        # VALIDATION 2: Medical necessity (diagnosis-procedure linkage)
+        medical_necessity = await self._validate_medical_necessity(
+            claim["diagnosis_codes"], claim["sbs_code"]
+        )
+        if not medical_necessity["is_appropriate"]:
+            errors.append({
+                "code": "SBS002",
+                "description_ar": "عدم توافق الإجراء مع التشخيص",
+                "description_en": "Procedure not appropriate for diagnosis",
+                "severity": "high",
+                "penalty_points": 5
+            })
+            penalty_points += 5
+        
+        # VALIDATION 3: Documentation completeness
+        documentation_check = await self._validate_documentation(
+            claim["medical_record"]
+        )
+        if not documentation_check["is_complete"]:
+            errors.append({
+                "code": "SBS003",
+                "description_ar": "توثيق سريري غير مكتمل",
+                "description_en": "Incomplete clinical documentation",
+                "severity": "medium",
+                "penalty_points": 3
+            })
+            penalty_points += 3
+        
+        # VALIDATION 4: Billing compliance (unbundling, upcoding)
+        billing_compliance = await self._validate_billing_compliance(claim)
+        if not billing_compliance["is_compliant"]:
+            for violation in billing_compliance["violations"]:
+                errors.append({
+                    "code": violation["code"],
+                    "description_ar": violation["description_ar"],
+                    "description_en": violation["description_en"],
+                    "severity": violation["severity"],
+                    "penalty_points": severity_weights[violation["severity"]]
+                })
+                penalty_points += severity_weights[violation["severity"]]
+        
+        # VALIDATION 5: Time-based rules (multiple procedures same day)
+        time_rules = await self._validate_time_based_rules(claim)
+        if not time_rules["is_compliant"]:
+            errors.append({
+                "code": "SBS005",
+                "description_ar": "انتهاك قواعد التوقيت للإجراءات المتعددة",
+                "description_en": "Violation of timing rules for multiple procedures",
+                "severity": "medium",
+                "penalty_points": 3
+            })
+            penalty_points += 3
+        
+        return {
+            "claim_id": claim["id"],
+            "patient_id": claim["patient_id"],
+            "sbs_code": claim["sbs_code"],
+            "billed_amount": claim["amount"],
+            "has_errors": len(errors) > 0,
+            "total_errors": len(errors),
+            "errors": errors,
+            "penalty_points": penalty_points,
+            "audit_timestamp": datetime.now().isoformat(),
+            "recommendations": self._generate_case_recommendations(errors)
+        }
+    
+    def _calculate_compliance_score(
+        self, 
+        total_penalty_points: int, 
+        sample_size: int
+    ) -> float:
+        """
+        Calculate CHI compliance score (0-100)
+        Formula: 100 - (total_penalty_points / (sample_size * max_penalty_per_case))
+        """
+        max_penalty_per_case = 25  # Maximum penalty per case
+        max_total_penalty = sample_size * max_penalty_per_case
+        
+        if max_total_penalty == 0:
+            return 100.0
+        
+        raw_score = 100 - ((total_penalty_points / max_total_penalty) * 100)
+        
+        # Apply curve (be lenient for minor errors)
+        if raw_score > 90:
+            return min(100, raw_score * 1.05)  # Bonus for excellent compliance
+        elif raw_score > 70:
+            return raw_score  # No adjustment
+        else:
+            return max(0, raw_score * 0.9)  # Penalty for poor compliance
+    
+    async def _generate_corrective_actions(
+        self, 
+        audit_results: List[Dict], 
+        compliance_score: float,
+        provider_id: str
+    ) -> Dict:
+        """
+        Generate Corrective Action Plan (CAP) per CHI requirements
+        """
+        cap_id = f"CAP-{datetime.now().strftime('%Y%m%d')}-{provider_id[:8]}"
+        
+        # Analyze error patterns
+        error_patterns = self._analyze_error_patterns(audit_results)
+        
+        corrective_actions = []
+        
+        # ACTION 1: Training requirements
+        if any(e["severity"] in ["high", "critical"] for r in audit_results for e in r["errors"]):
+            corrective_actions.append({
+                "action_id": f"{cap_id}-001",
+                "type": "mandatory_training",
+                "title_ar": "تدريب إلزامي على معايير الترميز",
+                "title_en": "Mandatory Coding Standards Training",
+                "description_ar": "إكمال دورة معايير الترميز السعودي خلال 30 يوم",
+                "description_en": "Complete Saudi Coding Standards course within 30 days",
+                "responsible_party": "coding_manager",
+                "deadline_days": 30,
+                "verification_required": True
+            })
+        
+        # ACTION 2: Documentation improvement
+        doc_errors = [e for r in audit_results for e in r["errors"] if "توثيق" in e["description_ar"]]
+        if doc_errors:
+            corrective_actions.append({
+                "action_id": f"{cap_id}-002",
+                "type": "clinical_documentation_improvement",
+                "title_ar": "برنامج تحسين التوثيق السريري",
+                "title_en": "Clinical Documentation Improvement Program",
+                "description_ar": "تنفيذ برنامج CDI وتدريب الأطباء على التوثيق الدقيق",
+                "description_en": "Implement CDI program and train physicians on accurate documentation",
+                "responsible_party": "medical_director",
+                "deadline_days": 60,
+                "verification_required": True
+            })
+        
+        # ACTION 3: System configuration updates
+        system_errors = [e for r in audit_results for e in r["errors"] if "system" in e["description_en"].lower()]
+        if system_errors:
+            corrective_actions.append({
+                "action_id": f"{cap_id}-003",
+                "type": "system_reconfiguration",
+                "title_ar": "تحديث إعدادات نظام الفوترة",
+                "title_en": "Billing System Configuration Update",
+                "description_ar": "مراجعة وتحديث إعدادات نظام الفوترة لمطابقة معايير CHI",
+                "description_en": "Review and update billing system settings to comply with CHI standards",
+                "responsible_party": "it_manager",
+                "deadline_days": 45,
+                "verification_required": True
+            })
+        
+        # ACTION 4: Re-audit requirement
+        if compliance_score < 85:
+            corrective_actions.append({
+                "action_id": f"{cap_id}-004",
+                "type": "follow_up_audit",
+                "title_ar": "مراجعة تدقيقية متابعة",
+                "title_en": "Follow-up Compliance Audit",
+                "description_ar": f"إجراء تدقيق متابعة خلال {90 if compliance_score < 70 else 180} يوم",
+                "description_en": f"Conduct follow-up audit within {90 if compliance_score < 70 else 180} days",
+                "responsible_party": "compliance_officer",
+                "deadline_days": 90 if compliance_score < 70 else 180,
+                "verification_required": True
+            })
+        
+        # Calculate implementation timeline
+        max_deadline = max([ca["deadline_days"] for ca in corrective_actions], default=0)
+        
+        return {
+            "cap_id": cap_id,
+            "generation_date": datetime.now().isoformat(),
+            "compliance_score_trigger": compliance_score,
+            "corrective_actions": corrective_actions,
+            "implementation_timeline": {
+                "start_date": datetime.now().isoformat(),
+                "estimated_completion": (datetime.now() + timedelta(days=max_deadline)).isoformat(),
+                "critical_path": self._calculate_critical_path(corrective_actions)
+            },
+            "success_criteria": self._define_success_criteria(compliance_score),
+            "escalation_procedure": self._get_escalation_procedure(compliance_score)
+        }
+1.2 Fraud Detection Algorithm
+python
+# backend/app/services/fraud_detection.py
+class FraudDetectionEngine:
+    """
+    Advanced fraud detection using machine learning patterns
+    """
+    
+    async def detect_potential_fraud(self, audit_results: List[Dict]) -> Dict:
+        """
+        Detect potential fraud patterns using multiple algorithms
+        """
+        fraud_indicators = []
+        
+        # PATTERN 1: Unusual billing patterns (Benford's Law)
+        benford_violation = await self._check_benfords_law(audit_results)
+        if benford_violation["is_violated"]:
+            fraud_indicators.append({
+                "pattern": "benfords_law_violation",
+                "confidence": benford_violation["confidence"],
+                "description_ar": "انحراف عن قانون بنفورد يشير إلى تلاعب محتمل",
+                "description_en": "Deviation from Benford's Law suggests potential manipulation"
+            })
+        
+        # PATTERN 2: Unbundling detection
+        unbundling_patterns = await self._detect_unbundling(audit_results)
+        fraud_indicators.extend(unbundling_patterns)
+        
+        # PATTERN 3: Upcoding detection
+        upcoding_patterns = await self._detect_upcoding(audit_results)
+        fraud_indicators.extend(upcoding_patterns)
+        
+        # PATTERN 4: Time-based anomalies (services outside normal hours)
+        time_anomalies = await self._detect_time_anomalies(audit_results)
+        fraud_indicators.extend(time_anomalies)
+        
+        # PATTERN 5: Patient sharing patterns (same patients across multiple providers)
+        patient_sharing = await self._detect_patient_sharing(audit_results)
+        fraud_indicators.extend(patient_sharing)
+        
+        # Calculate overall fraud risk score
+        fraud_risk_score = self._calculate_fraud_risk_score(fraud_indicators)
+        
+        return {
+            "fraud_risk_score": fraud_risk_score,
+            "risk_level": self._map_fraud_risk_level(fraud_risk_score),
+            "fraud_indicators": fraud_indicators,
+            "recommended_actions": self._get_fraud_response_actions(fraud_risk_score)
+        }
+    
+    async def _detect_unbundling(self, audit_results: List[Dict]) -> List[Dict]:
+        """
+        Detect unbundling - billing separate codes for components of a single procedure
+        """
+        unbundling_patterns = []
+        
+        # Load SBS bundling rules
+        bundling_rules = await self._load_bundling_rules()
+        
+        for claim in audit_results:
+            # Check if this code should be bundled with others
+            for rule in bundling_rules:
+                if rule["primary_code"] == claim["sbs_code"]:
+                    # Check if companion codes were also billed separately
+                    companion_codes = await self._find_companion_codes(
+                        audit_results, claim["patient_id"], claim["service_date"]
+                    )
+                    
+                    # If companion codes exist, flag potential unbundling
+                    if companion_codes and len(companion_codes) > rule["max_companions"]:
+                        unbundling_patterns.append({
+                            "pattern": "unbundling",
+                            "primary_code": claim["sbs_code"],
+                            "companion_codes": companion_codes,
+                            "confidence": 0.85,
+                            "description_ar": "فصل إجراء واحد إلى أكواد متعددة",
+                            "description_en": "Splitting single procedure into multiple codes"
+                        })
+        
+        return unbundling_patterns
+Part 2: AI-Powered Adaptive Learning Path Algorithm
+2.1 Architecture Overview
+The Adaptive Learning Engine uses multi-dimensional clustering, reinforcement learning, and predictive analytics to create personalized learning paths for Saudi medical coders.
+python
+# backend/app/services/adaptive_learning_engine.py
+from typing import Dict, List, Optional, Tuple
+from dataclasses import dataclass
+from enum import Enum
+import numpy as np
+from sklearn.cluster import KMeans, DBSCAN
+from sklearn.preprocessing import StandardScaler
+from sklearn.ensemble import RandomForestRegressor
+import pandas as pd
+from datetime import datetime, timedelta
+from sqlalchemy.ext.asyncio import AsyncSession
+
+class LearningStyle(str, Enum):
+    VISUAL = "visual"      # Prefers videos, diagrams
+    AUDITORY = "auditory"  # Prefers lectures, discussions
+    KINESTHETIC = "kinesthetic" # Prefers hands-on, simulations
+    READ_WRITE = "read_write"  # Prefers reading, note-taking
+
+class DifficultyLevel(str, Enum):
+    BEGINNER = "beginner"      # 0-1 years experience
+    INTERMEDIATE = "intermediate"  # 1-3 years experience
+    ADVANCED = "advanced"      # 3-5 years experience
+    EXPERT = "expert"          # 5+ years experience
+
+@dataclass
+class LearnerProfile:
+    """Comprehensive learner profile for Saudi medical coders"""
+    learner_id: str
+    # Background
+    educational_background: str  # medical, nursing, admin, etc.
+    years_experience: float
+    current_role: str  # coder, auditor, manager, etc.
+    
+    # Saudi-specific
+    region: str
+    target_certification: str  # CCP-KSA, CCC, etc.
+    sbs_version_focus: str  # 2.0, 3.0, or both
+    
+    # Learning preferences
+    learning_style: LearningStyle
+    preferred_modality: str  # virtual_live, self_paced, bootcamp
+    daily_study_hours: float
+    deadline_days: Optional[int]  # Days until certification exam
+    
+    # Current competency levels (1-10 scale)
+    medical_terminology: float
+    anatomy_knowledge: float
+    sbs_coding_skills: float
+    icd_10_am_skills: float
+    chi_regulations: float
+    
+    # Performance metrics
+    average_quiz_score: float
+    completion_rate: float
+    time_per_module: Dict[str, float]  # Module ID -> hours spent
+
+class AdaptiveLearningEngine:
+    """
+    AI-Powered Adaptive Learning Path Generator for Saudi Medical Coding
+    Uses clustering, reinforcement learning, and predictive analytics
+    """
+    
+    def __init__(self, db_session: AsyncSession):
+        self.db = db_session
+        self.scaler = StandardScaler()
+        self.cluster_models = {}
+        self.recommendation_cache = {}
+        
+    async def generate_learning_path(
+        self, 
+        learner_profile: LearnerProfile
+    ) -> Dict:
+        """
+        Generate personalized learning path with AI recommendations
+        """
+        # 1. CLUSTER ANALYSIS: Find similar learners
+        cluster_assignment = await self._assign_to_learner_cluster(learner_profile)
+        
+        # 2. GAP ANALYSIS: Identify skill gaps
+        skill_gaps = await self._analyze_skill_gaps(learner_profile)
+        
+        # 3. PATH GENERATION: Create optimized learning sequence
+        learning_path = await self._generate_optimized_path(
+            learner_profile, skill_gaps, cluster_assignment
+        )
+        
+        # 4. DIFFICULTY ADJUSTMENT: Adaptive difficulty based on performance
+        adjusted_path = await self._adjust_difficulty(
+            learning_path, learner_profile.performance_metrics
+        )
+        
+        # 5. SUCCESS PREDICTION: Predict certification success probability
+        success_probability = await self._predict_success_probability(
+            learner_profile, adjusted_path
+        )
+        
+        # 6. GENERATE ARABIC/ENGLISH LEARNING PLAN
+        learning_plan = self._create_learning_plan(
+            learner_profile, adjusted_path, success_probability
+        )
+        
+        return {
+            "learner_id": learner_profile.learner_id,
+            "generation_date": datetime.now().isoformat(),
+            "cluster_assignment": cluster_assignment,
+            "skill_gaps": skill_gaps,
+            "learning_path": adjusted_path,
+            "success_probability": success_probability,
+            "estimated_completion_time": self._estimate_completion_time(
+                adjusted_path, learner_profile.daily_study_hours
+            ),
+            "recommended_resources": await self._recommend_resources(
+                learner_profile, skill_gaps
+            ),
+            "milestones": self._define_milestones(adjusted_path),
+            "arabic_learning_plan": learning_plan["arabic"],
+            "english_learning_plan": learning_plan["english"],
+            "adaptive_parameters": {
+                "difficulty_adjustment_rate": 0.1,
+                "reinforcement_intervals": self._calculate_reinforcement_intervals(),
+                "personalization_score": self._calculate_personalization_score(
+                    learner_profile, adjusted_path
+                )
+            }
+        }
+    
+    async def _assign_to_learner_cluster(
+        self, 
+        learner_profile: LearnerProfile
+    ) -> Dict:
+        """
+        Use K-means clustering to find learners with similar profiles
+        """
+        # Get all learner profiles from database
+        all_profiles = await self._get_all_learner_profiles()
+        
+        if len(all_profiles) < 10:
+            # Not enough data for clustering, use rule-based assignment
+            return self._rule_based_clustering(learner_profile)
+        
+        # Prepare features for clustering
+        features = []
+        profile_ids = []
+        
+        for profile in all_profiles:
+            # Convert profile to feature vector
+            feature_vector = self._profile_to_features(profile)
+            features.append(feature_vector)
+            profile_ids.append(profile["learner_id"])
+        
+        # Add current learner
+        current_features = self._profile_to_features(learner_profile)
+        features.append(current_features)
+        profile_ids.append(learner_profile.learner_id)
+        
+        # Scale features
+        features_scaled = self.scaler.fit_transform(features)
+        
+        # Determine optimal number of clusters (Elbow Method)
+        optimal_k = self._find_optimal_clusters(features_scaled[:-1], max_k=8)
+        
+        # Apply K-means clustering
+        kmeans = KMeans(n_clusters=optimal_k, random_state=42, n_init=10)
+        clusters = kmeans.fit_predict(features_scaled)
+        
+        # Get current learner's cluster
+        current_cluster = clusters[-1]
+        
+        # Get cluster characteristics
+        cluster_centroid = kmeans.cluster_centers_[current_cluster]
+        cluster_members = [profile_ids[i] for i, c in enumerate(clusters) if c == current_cluster]
+        
+        # Calculate distance from centroid (how typical this learner is of the cluster)
+        distance_from_centroid = np.linalg.norm(
+            features_scaled[-1] - cluster_centroid
+        )
+        
+        return {
+            "cluster_id": int(current_cluster),
+            "cluster_size": len(cluster_members),
+            "cluster_members": cluster_members[:10],  # First 10 members
+            "distance_from_centroid": float(distance_from_centroid),
+            "centroid_characteristics": self._interpret_centroid(
+                cluster_centroid, self.scaler
+            ),
+            "cluster_label": self._label_cluster(
+                current_cluster, features_scaled, all_profiles
+            )
+        }
+    
+    async def _analyze_skill_gaps(
+        self, 
+        learner_profile: LearnerProfile
+    ) -> Dict:
+        """
+        Analyze skill gaps against Saudi certification requirements
+        """
+        # Load certification requirements
+        if learner_profile.target_certification == "CCP-KSA":
+            requirements = await self._get_ccp_ksa_requirements()
+        elif learner_profile.target_certification == "CCC":
+            requirements = await self._get_ccc_requirements()
+        else:
+            requirements = await self._get_general_requirements()
+        
+        # Current skill levels (from profile)
+        current_skills = {
+            "medical_terminology": learner_profile.medical_terminology,
+            "anatomy_knowledge": learner_profile.anatomy_knowledge,
+            "sbs_coding": learner_profile.sbs_coding_skills,
+            "icd_10_am": learner_profile.icd_10_am_skills,
+            "chi_regulations": learner_profile.chi_regulations
+        }
+        
+        # Calculate gaps
+        skill_gaps = {}
+        for skill, current_level in current_skills.items():
+            required_level = requirements.get(skill, {}).get(
+                "required_level", 8.0  # Default to 8/10
+            )
+            
+            gap = required_level - current_level
+            if gap > 0:
+                skill_gaps[skill] = {
+                    "current_level": current_level,
+                    "required_level": required_level,
+                    "gap": gap,
+                    "priority": self._calculate_skill_priority(
+                        skill, gap, requirements
+                    ),
+                    "recommended_modules": await self._find_modules_for_skill(
+                        skill, gap, learner_profile.sbs_version_focus
+                    )
+                }
+        
+        # Sort by priority (largest gaps and most important skills first)
+        sorted_gaps = dict(sorted(
+            skill_gaps.items(),
+            key=lambda x: x[1]["priority"],
+            reverse=True
+        ))
+        
+        return {
+            "total_gaps": len(sorted_gaps),
+            "largest_gap": max(
+                sorted_gaps.values(), 
+                key=lambda x: x["gap"]
+            ) if sorted_gaps else None,
+            "skill_gaps": sorted_gaps,
+            "overall_readiness": self._calculate_overall_readiness(
+                current_skills, requirements
+            ),
+            "critical_skills": self._identify_critical_skills(sorted_gaps)
+        }
+    
+    async def _generate_optimized_path(
+        self,
+        learner_profile: LearnerProfile,
+        skill_gaps: Dict,
+        cluster_assignment: Dict
+    ) -> List[Dict]:
+        """
+        Generate optimized learning path using reinforcement learning
+        """
+        # Get all available modules
+        all_modules = await self._get_all_learning_modules(
+            learner_profile.sbs_version_focus
+        )
+        
+        # Filter modules by learner's preferred modality
+        preferred_modules = [
+            m for m in all_modules 
+            if learner_profile.preferred_modality in m["available_modalities"]
+        ]
+        
+        # Build dependency graph
+        dependency_graph = self._build_dependency_graph(preferred_modules)
+        
+        # Initialize Q-learning for path optimization
+        q_learning = QLearningPathOptimizer(
+            modules=preferred_modules,
+            skill_gaps=skill_gaps,
+            learner_profile=learner_profile,
+            dependency_graph=dependency_graph
+        )
+        
+        # Find optimal path
+        optimal_path = q_learning.find_optimal_path(
+            max_steps=20,  # Maximum modules in path
+            exploration_rate=0.3
+        )
+        
+        # Add SBS version transitions
+        if learner_profile.sbs_version_focus == "both":
+            optimal_path = await self._insert_version_transitions(optimal_path)
+        
+        # Add Saudi-specific content
+        optimal_path = await self._enhance_with_saudi_content(
+            optimal_path, learner_profile.region
+        )
+        
+        # Calculate metrics for each module in path
+        enhanced_path = []
+        total_estimated_hours = 0
+        
+        for i, module_id in enumerate(optimal_path):
+            module = next(m for m in preferred_modules if m["id"] == module_id)
+            
+            # Estimate time based on learner's profile
+            estimated_hours = self._estimate_module_completion_time(
+                module, learner_profile
+            )
+            total_estimated_hours += estimated_hours
+            
+            # Calculate predicted score
+            predicted_score = await self._predict_module_score(
+                module, learner_profile, cluster_assignment
+            )
+            
+            enhanced_path.append({
+                "module_id": module_id,
+                "module_title_ar": module["title_ar"],
+                "module_title_en": module["title_en"],
+                "module_type": module["type"],
+                "sbs_version": module["sbs_version"],
+                "chapter": module.get("chapter"),
+                "skill_focus": module["skills_targeted"],
+                "estimated_hours": estimated_hours,
+                "predicted_score": predicted_score,
+                "difficulty_level": module["difficulty"],
+                "prerequisites": module.get("prerequisites", []),
+                "order": i + 1,
+                "milestone": self._is_milestone_module(module, i, len(optimal_path))
+            })
+        
+        return {
+            "path_id": f"PATH-{datetime.now().strftime('%Y%m%d')}-{learner_profile.learner_id[:8]}",
+            "total_modules": len(enhanced_path),
+            "total_estimated_hours": total_estimated_hours,
+            "modules": enhanced_path,
+            "path_characteristics": {
+                "focus_areas": self._identify_path_focus_areas(enhanced_path),
+                "difficulty_curve": self._calculate_difficulty_curve(enhanced_path),
+                "pacing_recommendation": self._recommend_pacing(
+                    enhanced_path, learner_profile.daily_study_hours
+                )
+            }
+        }
+    
+    async def _predict_success_probability(
+        self,
+        learner_profile: LearnerProfile,
+        learning_path: Dict
+    ) -> Dict:
+        """
+        Predict certification success probability using ensemble methods
+        """
+        # Prepare features for prediction
+        prediction_features = self._prepare_prediction_features(
+            learner_profile, learning_path
+        )
+        
+        # Load trained models
+        models = await self._load_prediction_models()
+        
+        # Get predictions from each model
+        predictions = {}
+        for model_name, model in models.items():
+            if hasattr(model, "predict_proba"):
+                proba = model.predict_proba([prediction_features])[0]
+                predictions[model_name] = {
+                    "success_probability": float(proba[1]),  # Probability of class 1 (success)
+                    "confidence": model.score  # Model's own confidence score
+                }
+            else:
+                prediction = model.predict([prediction_features])[0]
+                predictions[model_name] = {
+                    "success_probability": float(prediction),
+                    "confidence": 0.8  # Default confidence
+                }
+        
+        # Ensemble prediction (weighted average)
+        weights = {
+            "random_forest": 0.4,
+            "gradient_boosting": 0.3,
+            "neural_network": 0.2,
+            "logistic_regression": 0.1
+        }
+        
+        weighted_probability = sum(
+            predictions[model]["success_probability"] * weights.get(model, 0.25)
+            for model in predictions
+        )
+        
+        # Adjust for Saudi-specific factors
+        saudi_adjustment = self._apply_saudi_adjustment_factors(
+            learner_profile, learning_path
+        )
+        adjusted_probability = weighted_probability * saudi_adjustment
+        
+        # Calculate risk factors
+        risk_factors = self._identify_success_risk_factors(
+            learner_profile, learning_path
+        )
+        
+        return {
+            "overall_probability": min(1.0, max(0.0, adjusted_probability)),
+            "model_predictions": predictions,
+            "risk_factors": risk_factors,
+            "confidence_interval": self._calculate_confidence_interval(
+                adjusted_probability, predictions
+            ),
+            "improvement_levers": self._identify_improvement_levers(
+                adjusted_probability, risk_factors
+            ),
+            "prediction_explanation": self._explain_prediction(
+                adjusted_probability, risk_factors
+            )
+        }
+    
+    def _create_learning_plan(
+        self,
+        learner_profile: LearnerProfile,
+        learning_path: Dict,
+        success_probability: Dict
+    ) -> Dict:
+        """
+        Create comprehensive Arabic/English learning plan
+        """
+        # Arabic learning plan
+        arabic_plan = f"""
+‎        خطة التعلم الشخصية - نظام الفوترة السعودي
+        ========================================
+        
+‎        للمتعلم: {learner_profile.learner_id}
+‎        تاريخ الإنشاء: {datetime.now().strftime('%Y-%m-%d')}
+        
+‎        معلومات أساسية:
+‎        - الخلفية التعليمية: {self._translate_to_arabic(learner_profile.educational_background)}
+‎        - سنوات الخبرة: {learner_profile.years_experience}
+‎        - المنطقة: {learner_profile.region}
+‎        - الشهادة المستهدفة: {learner_profile.target_certification}
+        
+‎        تحليل الفجوات:
+        {self._format_skill_gaps_arabic(learning_path['skill_gaps'])}
+        
+‎        المسار المقترح ({len(learning_path['modules'])} وحدة):
+        """
+        
+        for i, module in enumerate(learning_path["modules"], 1):
+            arabic_plan += f"""
+        {i}. {module['module_title_ar']}
+‎           - المهارات: {', '.join(module['skill_focus'])}
+‎           - الوقت المقدر: {module['estimated_hours']} ساعة
+‎           - مستوى الصعوبة: {self._translate_difficulty_arabic(module['difficulty_level'])}
+           """
+            if module.get("milestone"):
+                arabic_plan += "   ⭐ (محطة مهمة)\n"
+        
+        arabic_plan += f"""
+        
+‎        التوقعات:
+‎        - احتمالية النجاح في الشهادة: {success_probability['overall_probability']:.1%}
+‎        - الوقت الإجمالي المقدر: {learning_path['total_estimated_hours']} ساعة
+‎        - تاريخ الإكمال المتوقع: {(datetime.now() + timedelta(days=learning_path['total_estimated_hours'] / learner_profile.daily_study_hours)).strftime('%Y-%m-%d')}
+        
+‎        عوامل الخطر:
+        {self._format_risk_factors_arabic(success_probability['risk_factors'])}
+        
+‎        التوصيات:
+‎        1. التركيز على {success_probability['improvement_levers'][0]['focus_area_ar']}
+        2. {success_probability['improvement_levers'][1]['action_ar']}
+        3. {success_probability['improvement_levers'][2]['action_ar']}
+        """
+        
+        # English learning plan
+        english_plan = f"""
+        Personalized Learning Plan - Saudi Billing System
+        ================================================
+        
+        Learner: {learner_profile.learner_id}
+        Creation Date: {datetime.now().strftime('%Y-%m-%d')}
+        
+        Background:
+        - Educational Background: {learner_profile.educational_background}
+        - Years of Experience: {learner_profile.years_experience}
+        - Region: {learner_profile.region}
+        - Target Certification: {learner_profile.target_certification}
+        
+        Gap Analysis:
+        {self._format_skill_gaps_english(learning_path['skill_gaps'])}
+        
+        Recommended Path ({len(learning_path['modules'])} modules):
+        """
+        
+        for i, module in enumerate(learning_path["modules"], 1):
+            english_plan += f"""
+        {i}. {module['module_title_en']}
+           - Skills: {', '.join(module['skill_focus'])}
+           - Estimated Time: {module['estimated_hours']} hours
+           - Difficulty Level: {module['difficulty_level']}
+           """
+            if module.get("milestone"):
+                english_plan += "   ⭐ (Key Milestone)\n"
+        
+        english_plan += f"""
+        
+        Predictions:
+        - Certification Success Probability: {success_probability['overall_probability']:.1%}
+        - Total Estimated Time: {learning_path['total_estimated_hours']} hours
+        - Expected Completion Date: {(datetime.now() + timedelta(days=learning_path['total_estimated_hours'] / learner_profile.daily_study_hours)).strftime('%Y-%m-%d')}
+        
+        Risk Factors:
+        {self._format_risk_factors_english(success_probability['risk_factors'])}
+        
+        Recommendations:
+        1. Focus on {success_probability['improvement_levers'][0]['focus_area_en']}
+        2. {success_probability['improvement_levers'][1]['action_en']}
+        3. {success_probability['improvement_levers'][2]['action_en']}
+        """
+        
+        return {
+            "arabic": arabic_plan,
+            "english": english_plan,
+            "summary": {
+                "total_pages_arabic": len(arabic_plan) // 500,
+                "total_pages_english": len(english_plan) // 500,
+                "key_highlights": self._extract_key_highlights(learning_path)
+            }
+        }
+2.2 Reinforcement Learning for Path Optimization
+python
+# backend/app/services/q_learning_optimizer.py
+import numpy as np
+from typing import List, Dict, Tuple
+from dataclasses import dataclass
+from collections import defaultdict
+
+@dataclass
+class ModuleState:
+    """Represents a learning module state in Q-learning"""
+    module_id: str
+    skills_covered: List[str]
+    time_spent: float
+    score_achieved: float
+    difficulty: str
+
+class QLearningPathOptimizer:
+    """
+    Q-Learning algorithm for optimizing learning paths
+    """
+    
+    def __init__(
+        self,
+        modules: List[Dict],
+        skill_gaps: Dict,
+        learner_profile: LearnerProfile,
+        dependency_graph: Dict
+    ):
+        self.modules = modules
+        self.skill_gaps = skill_gaps
+        self.learner_profile = learner_profile
+        self.dependency_graph = dependency_graph
+        
+        # Q-learning parameters
+        self.learning_rate = 0.1
+        self.discount_factor = 0.9
+        self.exploration_rate = 0.3
+        
+        # Initialize Q-table
+        self.q_table = defaultdict(lambda: defaultdict(float))
+        
+        # State representation
+        self.state_space = self._create_state_space()
+        self.action_space = self._create_action_space()
+    
+    def find_optimal_path(
+        self, 
+        max_steps: int = 20,
+        exploration_rate: float = 0.3
+    ) -> List[str]:
+        """
+        Find optimal learning path using Q-learning
+        """
+        self.exploration_rate = exploration_rate
+        
+        # Training episodes
+        for episode in range(1000):
+            state = self._get_initial_state()
+            total_reward = 0
+            
+            for step in range(max_steps):
+                # Choose action (ε-greedy)
+                if np.random.random() < self.exploration_rate:
+                    action = self._choose_random_action(state)
+                else:
+                    action = self._choose_best_action(state)
+                
+                # Take action and get reward
+                next_state, reward = self._take_action(state, action)
+                
+                # Update Q-value
+                best_next_action = self._choose_best_action(next_state)
+                td_target = reward + self.discount_factor * self.q_table[next_state][best_next_action]
+                td_error = td_target - self.q_table[state][action]
+                self.q_table[state][action] += self.learning_rate * td_error
+                
+                state = next_state
+                total_reward += reward
+                
+                # Check termination conditions
+                if self._should_terminate(state, step):
+                    break
+        
+        # Extract optimal path
+        optimal_path = []
+        state = self._get_initial_state()
+        
+        for _ in range(max_steps):
+            if not self.q_table[state]:
+                break
+            
+            action = self._choose_best_action(state)
+            optimal_path.append(action)
+            
+            # Move to next state
+            next_state, _ = self._take_action(state, action)
+            state = next_state
+            
+            if self._should_terminate(state, len(optimal_path)):
+                break
+        
+        return optimal_path
+    
+    def _take_action(
+        self, 
+        state: Tuple, 
+        action: str
+    ) -> Tuple[Tuple, float]:
+        """
+        Take an action and calculate reward
+        """
+        # Get module details
+        module = next(m for m in self.modules if m["id"] == action)
+        
+        # Calculate reward based on multiple factors
+        reward = 0
+        
+        # 1. Skill gap coverage reward
+        skill_coverage_reward = self._calculate_skill_coverage_reward(
+            state, module
+        )
+        reward += skill_coverage_reward * 2.0
+        
+        # 2. Time efficiency reward (shorter modules preferred)
+        time_efficiency_reward = self._calculate_time_efficiency_reward(module)
+        reward += time_efficiency_reward
+        
+        # 3. Difficulty appropriateness reward
+        difficulty_reward = self._calculate_difficulty_reward(
+            module, self.learner_profile
+        )
+        reward += difficulty_reward * 1.5
+        
+        # 4. Prerequisite satisfaction reward
+        prerequisite_reward = self._calculate_prerequisite_reward(state, module)
+        reward += prerequisite_reward * 3.0  # Higher weight for prerequisites
+        
+        # 5. Saudi content relevance reward
+        saudi_relevance_reward = self._calculate_saudi_relevance_reward(
+            module, self.learner_profile.region
+        )
+        reward += saudi_relevance_reward
+        
+        # Update state
+        new_state = self._update_state(state, action, module)
+        
+        return new_state, reward
+    
+    def _calculate_skill_coverage_reward(
+        self, 
+        state: Tuple, 
+        module: Dict
+    ) -> float:
+        """
+        Calculate reward based on how well module covers skill gaps
+        """
+        reward = 0
+        
+        # Get skills covered by module
+        module_skills = set(module.get("skills_targeted", []))
+        
+        # Get remaining skill gaps from state
+        remaining_gaps = state[1]  # Assuming state[1] contains remaining gaps
+        
+        # Calculate coverage
+        covered_gaps = module_skills.intersection(remaining_gaps)
+        
+        if covered_gaps:
+            # Higher reward for covering larger gaps
+            for skill in covered_gaps:
+                gap_size = self.skill_gaps.get(skill, {}).get("gap", 0)
+                reward += gap_size * 0.5
+            
+            # Bonus for covering multiple skills
+            if len(covered_gaps) > 1:
+                reward *= 1.2
+        
+        return reward
+2.3 Performance Tracking & Adaptive Adjustment
+python
+# backend/app/services/performance_tracker.py
+class PerformanceTracker:
+    """
+    Tracks learner performance and adapts learning path in real-time
+    """
+    
+    async def track_and_adjust(
+        self,
+        learner_id: str,
+        module_id: str,
+        performance_data: Dict
+    ) -> Dict:
+        """
+        Track performance and adjust learning path dynamically
+        """
+        # Record performance
+        await self._record_performance(
+            learner_id, module_id, performance_data
+        )
+        
+        # Analyze performance patterns
+        performance_patterns = await self._analyze_performance_patterns(
+            learner_id, module_id
+        )
+        
+        # Check for struggling patterns
+        if self._detect_struggling_pattern(performance_patterns):
+            adjustments = await self._generate_remediation_adjustments(
+                learner_id, module_id, performance_patterns
+            )
+            
+            # Update learning path
+            updated_path = await self._adjust_learning_path(
+                learner_id, adjustments
+            )
+            
+            return {
+                "status": "adjusted",
+                "adjustment_reason": "struggling_detected",
+                "adjustments": adjustments,
+                "updated_path": updated_path,
+                "recommendations": await self._get_remediation_recommendations(
+                    performance_patterns
+                )
+            }
+        
+        # Check for mastery patterns (fast learning)
+        if self._detect_mastery_pattern(performance_patterns):
+            adjustments = await self._generate_acceleration_adjustments(
+                learner_id, module_id, performance_patterns
+            )
+            
+            # Update learning path
+            updated_path = await self._adjust_learning_path(
+                learner_id, adjustments
+            )
+            
+            return {
+                "status": "accelerated",
+                "adjustment_reason": "mastery_detected",
+                "adjustments": adjustments,
+                "updated_path": updated_path,
+                "recommendations": await self._get_acceleration_recommendations(
+                    performance_patterns
+                )
+            }
+        
+        # No adjustment needed
+        return {
+            "status": "optimal",
+            "adjustment_reason": None,
+            "next_check": datetime.now() + timedelta(hours=24)
+        }
+    
+    async def _generate_remediation_adjustments(
+        self,
+        learner_id: str,
+        module_id: str,
+        performance_patterns: Dict
+    ) -> List[Dict]:
+        """
+        Generate adjustments for struggling learners
+        """
+        adjustments = []
+        
+        # 1. Add prerequisite review
+        if performance_patterns.get("prerequisite_gaps"):
+            adjustments.append({
+                "type": "prerequisite_review",
+                "modules": await self._find_prerequisite_modules(
+                    module_id, performance_patterns["prerequisite_gaps"]
+                ),
+                "duration_days": 3,
+                "reason_ar": "مراجعة المتطلبات الأساسية",
+                "reason_en": "Prerequisite knowledge review"
+            })
+        
+        # 2. Reduce difficulty
+        if performance_patterns.get("difficulty_too_high"):
+            adjustments.append({
+                "type": "difficulty_reduction",
+                "current_module": module_id,
+                "alternative_module": await self._find_easier_alternative(
+                    module_id
+                ),
+                "reason_ar": "تخفيض مستوى الصعوبة",
+                "reason_en": "Reduce difficulty level"
+            })
+        
+        # 3. Add practice exercises
+        if performance_patterns.get("needs_more_practice"):
+            adjustments.append({
+                "type": "additional_practice",
+                "practice_sessions": await self._generate_practice_sessions(
+                    module_id, performance_patterns["weak_areas"]
+                ),
+                "duration_days": 2,
+                "reason_ar": "تمارين تدريبية إضافية",
+                "reason_en": "Additional practice exercises"
+            })
+        
+        # 4. Change learning modality
+        if performance_patterns.get("modality_mismatch"):
+            adjustments.append({
+                "type": "modality_change",
+                "from_modality": performance_patterns["current_modality"],
+                "to_modality": await self._recommend_alternative_modality(
+                    learner_id
+                ),
+                "reason_ar": "تغيير أسلوب التعلم",
+                "reason_en": "Change learning modality"
+            })
+        
+        return adjustments
+Summary & Key Implementation Insights
+
+
+Component
+Core Algorithm
+Key Features
+Saudi-Specific Considerations
+CHI Audit Simulation
+Risk-based sampling, Penalty scoring, Fraud pattern detection
+Real-time validation, Arabic/English reports, Corrective Action Plans
+CHI Framework compliance, Regional variations (Riyadh vs Jeddah), SBS version-specific rules
+Adaptive Learning Engine
+K-means clustering, Q-learning optimization, Ensemble prediction
+Personalized paths, Success prediction, Real-time adjustment
+Saudi certification focus (CCP-KSA), Arabic content weighting, Regional case studies
+Key Implementation Steps:
+	1	Database Schema - Implement all models for learners, modules, audits, and performance tracking
+	2	API Endpoints - Create RESTful APIs for both systems with versioning
+	3	Frontend Integration - Build React components for audit dashboard and learning portal
+	4	Saudi Localization - Add Arabic translations and RTL support
+	5	Performance Optimization - Implement caching for Q-tables and prediction models
+	6	Monitoring & Analytics - Track system performance and learning outcomes
+Both systems integrate with your existing SBS architecture and provide the sophisticated capabilities needed for the Saudi medical coding training market. The CHI audit system ensures regulatory compliance, while the adaptive learning engine maximizes certification success rates through personalized, AI-driven education paths.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Frontend Integration - Build React components for audit dashboard and learning portal
+
+Saudi Localization - Add Arabic translations and RTL support
+
+
+
+
+
+
+
+
+
+Hmm, the user is now asking for two very specific and important enhancements to the medical coding platform: frontend React components for the audit dashboard and learning portal, plus comprehensive Saudi localization with Arabic and RTL support. This builds directly on our extensive previous work on the backend systems.
+I need to provide a complete implementation guide that covers both the React component architecture and the full Arabic/RTL localization system. The user wants practical, production-ready code they can implement immediately. The medical coding platform has very specific Saudi requirements, so the solution must include proper RTL layout, Arabic translations, and culturally appropriate UI patterns.
+For the frontend components, I'll create a modular React structure with TypeScript, focusing on the audit dashboard and learning portal as the two main applications. The audit dashboard should visualize CHI compliance data with interactive charts, while the learning portal needs to display the AI-powered adaptive learning paths. I will implement them using a component library with proper state management and API integration.
+For Saudi localization, I need to build a complete i18n system with Arabic translations, RTL CSS support, and locale-aware components. This includes date/number formatting, Arabic font integration, and bidirectional text handling. The platform must dynamically switch between Arabic and English while maintaining proper layout in both directions.
+I will organize this into clear sections with code examples for both systems, ensuring they integrate well with our existing backend APIs. The response should be practical and immediately useful for developers implementing these features.
+
+Complete Frontend Implementation: React Components & Saudi Localization
+Part 1: React Components for Audit Dashboard & Learning Portal
+1.1 Project Structure & Setup
+text
+src/
+├── components/
+│   ├── audit/
+│   │   ├── AuditDashboard.jsx
+│   │   ├── ComplianceScoreCard.jsx
+│   │   ├── AuditCaseReview.jsx
+│   │   ├── CorrectiveActionsPanel.jsx
+│   │   └── FraudDetectionAlerts.jsx
+│   ├── learning/
+│   │   ├── LearningPortal.jsx
+│   │   ├── SkillGapAnalysis.jsx
+│   │   ├── LearningPathVisualizer.jsx
+│   │   ├── ModuleProgress.jsx
+│   │   └── SaudiCaseSimulator.jsx
+│   ├── common/
+│   │   ├── SaudiRTLWrapper.jsx
+│   │   ├── ArabicNumberFormatter.jsx
+│   │   ├── HijriDatePicker.jsx
+│   │   └── SBSVersionSwitcher.jsx
+│   └── layout/
+│       ├── MainLayout.jsx
+│       ├── SidebarNavigation.jsx
+│       └── Header.jsx
+├── hooks/
+│   ├── useAuditData.js
+│   ├── useLearningPath.js
+│   └── useSaudiLocalization.js
+├── services/
+│   ├── api/
+│   │   ├── auditApi.js
+│   │   ├── learningApi.js
+│   │   └── sbsApi.js
+│   └── localization/
+│       ├── i18n.js
+│       └── arabicFormatter.js
+├── styles/
+│   ├── rtl.scss
+│   └── themes/
+│       ├── saudi-light.scss
+│       └── saudi-dark.scss
+└── utils/
+    ├── arabicUtils.js
+    ├── hijriDate.js
+    └── sbsCodeValidator.js
+1.2 Core React Components
+AuditDashboard.jsx
+jsx
+// src/components/audit/AuditDashboard.jsx
+import React, { useState, useEffect, useMemo } from 'react';
+import { useAuditData } from '../../hooks/useAuditData';
+import { useLanguage } from '../../contexts/LanguageContext';
+import ComplianceScoreCard from './ComplianceScoreCard';
+import AuditCaseReview from './AuditCaseReview';
+import CorrectiveActionsPanel from './CorrectiveActionsPanel';
+import FraudDetectionAlerts from './FraudDetectionAlerts';
+import { arabicFormatter, formatHijriDate } from '../../utils/arabicUtils';
+import './AuditDashboard.scss';
+
+const AuditDashboard = ({ providerId, sbsVersion = '2.0', region = 'Riyadh' }) => {
+  const { language, direction } = useLanguage();
+  const [timeRange, setTimeRange] = useState('last_30_days');
+  const [focusArea, setFocusArea] = useState('all');
+  const [auditSimulation, setAuditSimulation] = useState(null);
+  
+  const {
+    auditData,
+    complianceScore,
+    loading,
+    error,
+    simulateAudit,
+    generateReport
+  } = useAuditData(providerId, sbsVersion, region);
+  
+  const handleSimulateAudit = async () => {
+    const config = {
+      sampleSize: 100,
+      riskBasedSampling: true,
+      focusAreas: focusArea === 'all' ? [] : [focusArea],
+      auditPeriod: getAuditPeriod(timeRange),
+      sbsVersion
+    };
+    
+    const result = await simulateAudit(config);
+    setAuditSimulation(result);
+    
+    // Track analytics
+    window.gtag('event', 'audit_simulated', {
+      provider_id: providerId,
+      sample_size: config.sampleSize,
+      sbs_version: sbsVersion
+    });
+  };
+  
+  const getAuditPeriod = (range) => {
+    const now = new Date();
+    switch(range) {
+      case 'last_7_days':
+        return [new Date(now.setDate(now.getDate() - 7)), new Date()];
+      case 'last_30_days':
+        return [new Date(now.setDate(now.getDate() - 30)), new Date()];
+      case 'last_quarter':
+        return [new Date(now.setMonth(now.getMonth() - 3)), new Date()];
+      default:
+        return [new Date(now.setFullYear(now.getFullYear() - 1)), new Date()];
+    }
+  };
+  
+  const focusAreaOptions = [
+    { value: 'all', label: language === 'ar' ? 'الجميع' : 'All' },
+    { value: 'rehabilitation', label: language === 'ar' ? 'خدمات التأهيل' : 'Rehabilitation Services' },
+    { value: 'bilateral_procedures', label: language === 'ar' ? 'الإجراءات الثنائية' : 'Bilateral Procedures' },
+    { value: 'emergency_services', label: language === 'ar' ? 'خدمات الطوارئ' : 'Emergency Services' },
+    { value: 'unlisted_codes', label: language === 'ar' ? 'الأكواد غير المدرجة' : 'Unlisted Codes' }
+  ];
+  
+  if (loading) {
+    return (
+      <div className="loading-container" dir={direction}>
+        <div className="loading-spinner"></div>
+        <p>{language === 'ar' ? 'جاري تحميل بيانات التدقيق...' : 'Loading audit data...'}</p>
+      </div>
+    );
+  }
+  
+  return (
+    <div className="audit-dashboard" dir={direction}>
+      <div className="dashboard-header">
+        <h1 className={language === 'ar' ? 'arabic-title' : 'english-title'}>
+          {language === 'ar' ? 'لوحة تحكم تدقيق CHI' : 'CHI Audit Dashboard'}
+        </h1>
+        <div className="dashboard-meta">
+          <span className="provider-info">
+            {language === 'ar' ? 'مزود الخدمة:' : 'Provider:'} {providerId}
+          </span>
+          <span className="sbs-version">
+            SBS {language === 'ar' ? 'النسخة:' : 'Version:'} {sbsVersion}
+          </span>
+          <span className="region-info">
+            {language === 'ar' ? 'المنطقة:' : 'Region:'} {region}
+          </span>
+        </div>
+      </div>
+      
+      {/* Controls */}
+      <div className="dashboard-controls">
+        <div className="control-group">
+          <label htmlFor="timeRange">
+            {language === 'ar' ? 'الفترة الزمنية:' : 'Time Range:'}
+          </label>
+          <select 
+            id="timeRange" 
+            value={timeRange}
+            onChange={(e) => setTimeRange(e.target.value)}
+            className={`select-control ${language === 'ar' ? 'rtl-select' : ''}`}
+          >
+            <option value="last_7_days">
+              {language === 'ar' ? 'آخر 7 أيام' : 'Last 7 days'}
+            </option>
+            <option value="last_30_days">
+              {language === 'ar' ? 'آخر 30 يوم' : 'Last 30 days'}
+            </option>
+            <option value="last_quarter">
+              {language === 'ar' ? 'آخر ربع سنة' : 'Last quarter'}
+            </option>
+            <option value="last_year">
+              {language === 'ar' ? 'آخر سنة' : 'Last year'}
+            </option>
+          </select>
+        </div>
+        
+        <div className="control-group">
+          <label htmlFor="focusArea">
+            {language === 'ar' ? 'مجال التركيز:' : 'Focus Area:'}
+          </label>
+          <select
+            id="focusArea"
+            value={focusArea}
+            onChange={(e) => setFocusArea(e.target.value)}
+            className={`select-control ${language === 'ar' ? 'rtl-select' : ''}`}
+          >
+            {focusAreaOptions.map(option => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </div>
+        
+        <button 
+          onClick={handleSimulateAudit}
+          className="btn btn-primary simulate-audit-btn"
+        >
+          {language === 'ar' ? 'تشغيل محاكاة التدقيق' : 'Run Audit Simulation'}
+        </button>
+        
+        <button 
+          onClick={() => generateReport(auditSimulation?.audit_id)}
+          className="btn btn-secondary"
+          disabled={!auditSimulation}
+        >
+          {language === 'ar' ? 'تحميل التقرير' : 'Download Report'}
+        </button>
+      </div>
+      
+      {/* Main Dashboard Content */}
+      <div className="dashboard-content">
+        <div className="row">
+          {/* Compliance Score Card */}
+          <div className="col-lg-3 col-md-6">
+            <ComplianceScoreCard 
+              score={auditSimulation?.compliance_score || complianceScore}
+              riskLevel={auditSimulation?.risk_level}
+              previousScore={auditData?.historical_scores?.[0]?.score}
+              language={language}
+            />
+          </div>
+          
+          {/* Fraud Detection Alerts */}
+          <div className="col-lg-9 col-md-6">
+            <FraudDetectionAlerts 
+              fraudIndicators={auditSimulation?.fraud_detection?.fraud_indicators || []}
+              riskScore={auditSimulation?.fraud_detection?.fraud_risk_score}
+              language={language}
+            />
+          </div>
+        </div>
+        
+        {/* Audit Case Review */}
+        <div className="row mt-4">
+          <div className="col-lg-8">
+            <AuditCaseReview 
+              cases={auditSimulation?.audit_results || auditData?.recent_cases || []}
+              totalErrors={auditSimulation?.total_errors}
+              language={language}
+              sbsVersion={sbsVersion}
+            />
+          </div>
+          
+          {/* Corrective Actions Panel */}
+          <div className="col-lg-4">
+            <CorrectiveActionsPanel 
+              actions={auditSimulation?.corrective_actions || []}
+              complianceScore={auditSimulation?.compliance_score}
+              language={language}
+            />
+          </div>
+        </div>
+        
+        {/* Audit Details */}
+        {auditSimulation && (
+          <div className="audit-details mt-4">
+            <h3 className={language === 'ar' ? 'arabic-title' : 'english-title'}>
+              {language === 'ar' ? 'تفاصيل التدقيق' : 'Audit Details'}
+            </h3>
+            
+            <div className="details-grid">
+              <div className="detail-item">
+                <span className="detail-label">
+                  {language === 'ar' ? 'معرف التدقيق:' : 'Audit ID:'}
+                </span>
+                <span className="detail-value">{auditSimulation.audit_id}</span>
+              </div>
+              
+              <div className="detail-item">
+                <span className="detail-label">
+                  {language === 'ar' ? 'تاريخ التدقيق:' : 'Audit Date:'}
+                </span>
+                <span className="detail-value">
+                  {language === 'ar' 
+                    ? formatHijriDate(new Date(auditSimulation.audit_date))
+                    : new Date(auditSimulation.audit_date).toLocaleDateString()
+                  }
+                </span>
+              </div>
+              
+              <div className="detail-item">
+                <span className="detail-label">
+                  {language === 'ar' ? 'حجم العينة:' : 'Sample Size:'}
+                </span>
+                <span className="detail-value">{auditSimulation.sample_size}</span>
+              </div>
+              
+              <div className="detail-item">
+                <span className="detail-label">
+                  {language === 'ar' ? 'نتيجة التدقيق:' : 'Audit Outcome:'}
+                </span>
+                <span className={`detail-value outcome-${auditSimulation.audit_outcome?.toLowerCase()}`}>
+                  {language === 'ar' 
+                    ? getArabicOutcome(auditSimulation.audit_outcome)
+                    : auditSimulation.audit_outcome
+                  }
+                </span>
+              </div>
+            </div>
+            
+            {/* Arabic Report Preview */}
+            {language === 'ar' && auditSimulation.arabic_report && (
+              <div className="report-preview mt-3">
+                <h4>معاينة التقرير العربي</h4>
+                <div className="preview-content">
+                  {auditSimulation.arabic_report.substring(0, 500)}...
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+const getArabicOutcome = (outcome) => {
+  const outcomes = {
+    'COMPLIANT': 'مطابق',
+    'MINOR_ISSUES': 'قضايا ثانوية',
+    'NEEDS_IMPROVEMENT': 'بحاجة لتحسين',
+    'NON_COMPLIANT': 'غير مطابق',
+    'CRITICAL': 'حرج'
+  };
+  return outcomes[outcome] || outcome;
+};
+
+export default AuditDashboard;
+LearningPortal.jsx
+jsx
+// src/components/learning/LearningPortal.jsx
+import React, { useState, useEffect } from 'react';
+import { useLearningPath } from '../../hooks/useLearningPath';
+import { useAuth } from '../../contexts/AuthContext';
+import { useLanguage } from '../../contexts/LanguageContext';
+import SkillGapAnalysis from './SkillGapAnalysis';
+import LearningPathVisualizer from './LearningPathVisualizer';
+import ModuleProgress from './ModuleProgress';
+import SaudiCaseSimulator from './SaudiCaseSimulator';
+import { arabicNumber, formatHijriDate } from '../../utils/arabicUtils';
+import './LearningPortal.scss';
+
+const LearningPortal = () => {
+  const { user } = useAuth();
+  const { language, direction } = useLanguage();
+  const [activeTab, setActiveTab] = useState('learning-path');
+  const [sbsVersion, setSbsVersion] = useState('2.0');
+  const [learningPath, setLearningPath] = useState(null);
+  const [isGeneratingPath, setIsGeneratingPath] = useState(false);
+  
+  const {
+    generateLearningPath,
+    updateProgress,
+    getRecommendations,
+    loading,
+    error
+  } = useLearningPath();
+  
+  useEffect(() => {
+    if (user) {
+      fetchLearningPath();
+    }
+  }, [user, sbsVersion]);
+  
+  const fetchLearningPath = async () => {
+    const profile = {
+      learner_id: user.id,
+      educational_background: user.educational_background,
+      years_experience: user.years_of_experience,
+      region: user.region,
+      target_certification: user.target_certification,
+      sbs_version_focus: sbsVersion,
+      learning_style: user.learning_style || 'visual',
+      preferred_modality: user.preferred_modality || 'self_paced',
+      daily_study_hours: user.daily_study_hours || 2,
+      // Add competency levels from user profile
+      medical_terminology: user.competency_scores?.medical_terminology || 5,
+      anatomy_knowledge: user.competency_scores?.anatomy_knowledge || 5,
+      sbs_coding_skills: user.competency_scores?.sbs_coding || 5,
+      icd_10_am_skills: user.competency_scores?.icd_10_am || 5,
+      chi_regulations: user.competency_scores?.chi_regulations || 5
+    };
+    
+    const path = await generateLearningPath(profile);
+    setLearningPath(path);
+  };
+  
+  const handleGenerateNewPath = async () => {
+    setIsGeneratingPath(true);
+    await fetchLearningPath();
+    setIsGeneratingPath(false);
+  };
+  
+  const handleModuleComplete = async (moduleId, score) => {
+    await updateProgress(user.id, moduleId, {
+      score,
+      completion_date: new Date().toISOString(),
+      time_spent_minutes: 45 // This would come from actual tracking
+    });
+    
+    // Refresh learning path with updated progress
+    await fetchLearningPath();
+  };
+  
+  const tabs = [
+    { id: 'learning-path', label: language === 'ar' ? 'مسار التعلم' : 'Learning Path' },
+    { id: 'skill-gaps', label: language === 'ar' ? 'فجوات المهارات' : 'Skill Gaps' },
+    { id: 'simulator', label: language === 'ar' ? 'محاكي الترميز' : 'Coding Simulator' },
+    { id: 'progress', label: language === 'ar' ? 'التقدم' : 'Progress' }
+  ];
+  
+  const sbsVersionOptions = [
+    { value: '2.0', label: language === 'ar' ? 'SBS النسخة 2.0' : 'SBS Version 2.0' },
+    { value: '3.0', label: language === 'ar' ? 'SBS النسخة 3.0' : 'SBS Version 3.0' },
+    { value: 'both', label: language === 'ar' ? 'النسختين معاً' : 'Both Versions' }
+  ];
+  
+  return (
+    <div className="learning-portal" dir={direction}>
+      {/* Portal Header */}
+      <div className="portal-header">
+        <div className="header-content">
+          <h1 className={language === 'ar' ? 'arabic-title' : 'english-title'}>
+            {language === 'ar' ? 'بوابة التعلم - الترميز الطبي' : 'Learning Portal - Medical Coding'}
+          </h1>
+          <p className="portal-subtitle">
+            {language === 'ar' 
+‎              ? 'مسار تعلم شخصي مدعوم بالذكاء الاصطناعي للنجاح في الشهادات السعودية'
+              : 'AI-powered personalized learning path for Saudi certification success'
+            }
+          </p>
+        </div>
+        
+        <div className="header-actions">
+          <div className="version-selector">
+            <label htmlFor="sbsVersion">
+              {language === 'ar' ? 'نسخة SBS:' : 'SBS Version:'}
+            </label>
+            <select
+              id="sbsVersion"
+              value={sbsVersion}
+              onChange={(e) => setSbsVersion(e.target.value)}
+              className={`select-control ${language === 'ar' ? 'rtl-select' : ''}`}
+            >
+              {sbsVersionOptions.map(option => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </div>
+          
+          <button
+            onClick={handleGenerateNewPath}
+            disabled={isGeneratingPath}
+            className="btn btn-primary generate-path-btn"
+          >
+            {isGeneratingPath 
+              ? (language === 'ar' ? 'جاري إنشاء المسار...' : 'Generating path...')
+              : (language === 'ar' ? 'تحديث المسار' : 'Update Learning Path')
+            }
+          </button>
+        </div>
+      </div>
+      
+      {/* User Info Banner */}
+      <div className="user-info-banner">
+        <div className="user-details">
+          <span className="user-name">{user.full_name}</span>
+          <span className="user-target">
+            {language === 'ar' ? 'الشهادة المستهدفة:' : 'Target Certification:'} 
+            <strong> {user.target_certification || 'CCP-KSA'}</strong>
+          </span>
+          <span className="user-region">
+            {language === 'ar' ? 'المنطقة:' : 'Region:'} {user.region || 'Riyadh'}
+          </span>
+        </div>
+        
+        {learningPath?.success_probability && (
+          <div className="success-prediction">
+            <div className="prediction-label">
+              {language === 'ar' ? 'احتمالية النجاح:' : 'Success Probability:'}
+            </div>
+            <div className="prediction-value">
+              {(learningPath.success_probability.overall_probability * 100).toFixed(1)}%
+            </div>
+          </div>
+        )}
+      </div>
+      
+      {/* Navigation Tabs */}
+      <div className="portal-tabs">
+        <div className="tabs-container">
+          {tabs.map(tab => (
+            <button
+              key={tab.id}
+              className={`tab-btn ${activeTab === tab.id ? 'active' : ''}`}
+              onClick={() => setActiveTab(tab.id)}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+      </div>
+      
+      {/* Tab Content */}
+      <div className="tab-content">
+        {activeTab === 'learning-path' && (
+          <div className="learning-path-tab">
+            {learningPath ? (
+              <>
+                <LearningPathVisualizer 
+                  path={learningPath.learning_path}
+                  language={language}
+                  onModuleClick={(moduleId) => {
+                    // Navigate to module or show details
+                    console.log('Module clicked:', moduleId);
+                  }}
+                />
+                
+                <div className="path-summary">
+                  <h3>{language === 'ar' ? 'ملخص المسار' : 'Path Summary'}</h3>
+                  <div className="summary-grid">
+                    <div className="summary-item">
+                      <span className="summary-label">
+                        {language === 'ar' ? 'إجمالي الوحدات:' : 'Total Modules:'}
+                      </span>
+                      <span className="summary-value">
+                        {learningPath.learning_path?.total_modules || 0}
+                      </span>
+                    </div>
+                    <div className="summary-item">
+                      <span className="summary-label">
+                        {language === 'ar' ? 'الوقت المقدر:' : 'Estimated Time:'}
+                      </span>
+                      <span className="summary-value">
+                        {learningPath.learning_path?.total_estimated_hours || 0} 
+                        {language === 'ar' ? ' ساعة' : ' hours'}
+                      </span>
+                    </div>
+                    <div className="summary-item">
+                      <span className="summary-label">
+                        {language === 'ar' ? 'تاريخ الإكمال المتوقع:' : 'Expected Completion:'}
+                      </span>
+                      <span className="summary-value">
+                        {language === 'ar'
+                          ? formatHijriDate(
+                              new Date(Date.now() + 
+                                (learningPath.learning_path?.total_estimated_hours || 0) * 
+                                60 * 60 * 1000)
+                            )
+                          : new Date(
+                              Date.now() + 
+                              (learningPath.learning_path?.total_estimated_hours || 0) * 
+                              60 * 60 * 1000
+                            ).toLocaleDateString()
+                        }
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <div className="no-path-message">
+                <p>
+                  {language === 'ar' 
+‎                    ? 'لا يوجد مسار تعلم مخصص. اضغط على "تحديث المسار" لإنشاء مسار شخصي.'
+                    : 'No personalized learning path. Click "Update Learning Path" to generate one.'
+                  }
+                </p>
+              </div>
+            )}
+          </div>
+        )}
+        
+        {activeTab === 'skill-gaps' && learningPath && (
+          <SkillGapAnalysis 
+            skillGaps={learningPath.skill_gaps}
+            language={language}
+          />
+        )}
+        
+        {activeTab === 'simulator' && (
+          <SaudiCaseSimulator 
+            sbsVersion={sbsVersion}
+            region={user.region}
+            language={language}
+          />
+        )}
+        
+        {activeTab === 'progress' && learningPath && (
+          <ModuleProgress 
+            progress={user.learning_progress || []}
+            learningPath={learningPath}
+            language={language}
+            onModuleComplete={handleModuleComplete}
+          />
+        )}
+      </div>
+      
+      {/* Recommendations Panel */}
+      {learningPath?.recommended_resources && (
+        <div className="recommendations-panel">
+          <h3 className={language === 'ar' ? 'arabic-title' : 'english-title'}>
+            {language === 'ar' ? 'موارد موصى بها' : 'Recommended Resources'}
+          </h3>
+          <div className="resources-grid">
+            {learningPath.recommended_resources.slice(0, 3).map((resource, index) => (
+              <div key={index} className="resource-card">
+                <div className="resource-type">{resource.type}</div>
+                <h4 className={language === 'ar' ? 'arabic-title' : 'english-title'}>
+                  {language === 'ar' ? resource.title_ar : resource.title_en}
+                </h4>
+                <p className="resource-description">
+                  {language === 'ar' ? resource.description_ar : resource.description_en}
+                </p>
+                <a 
+                  href={resource.url} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="btn btn-sm btn-outline-primary"
+                >
+                  {language === 'ar' ? 'فتح المورد' : 'Open Resource'}
+                </a>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default LearningPortal;
+Part 2: Saudi Localization with Arabic & RTL Support
+2.1 Complete i18n Localization System
+i18n Configuration
+javascript
+// src/services/localization/i18n.js
+import i18n from 'i18next';
+import { initReactI18next } from 'react-i18next';
+import LanguageDetector from 'i18next-browser-languagedetector';
+
+// Arabic translations
+const arabicTranslations = {
+  common: {
+    loading: 'جاري التحميل...',
+    error: 'حدث خطأ',
+    save: 'حفظ',
+    cancel: 'إلغاء',
+    delete: 'حذف',
+    edit: 'تعديل',
+    view: 'عرض',
+    search: 'بحث',
+    filter: 'تصفية',
+    sort: 'ترتيب',
+    export: 'تصدير',
+    import: 'استيراد',
+    settings: 'إعدادات',
+    help: 'مساعدة',
+    logout: 'تسجيل الخروج'
+  },
+  
+  audit: {
+    dashboard: 'لوحة تحكم التدقيق',
+    compliance_score: 'درجة المطابقة',
+    risk_level: 'مستوى الخطورة',
+    sample_size: 'حجم العينة',
+    total_errors: 'إجمالي الأخطاء',
+    corrective_actions: 'إجراءات تصحيحية',
+    fraud_detection: 'كشف الغش',
+    audit_outcome: 'نتيجة التدقيق',
+    audit_date: 'تاريخ التدقيق',
+    provider_id: 'معرف مقدم الخدمة',
+    sbs_version: 'نسخة نظام الفوترة السعودي',
+    region: 'المنطقة',
+    
+    outcomes: {
+      COMPLIANT: 'مطابق',
+      MINOR_ISSUES: 'قضايا ثانوية',
+      NEEDS_IMPROVEMENT: 'بحاجة لتحسين',
+      NON_COMPLIANT: 'غير مطابق',
+      CRITICAL: 'حرج'
+    },
+    
+    risk_levels: {
+      low: 'منخفض',
+      medium: 'متوسط',
+      high: 'مرتفع',
+      critical: 'حرج'
+    },
+    
+    error_types: {
+      SBS001: 'الكود غير موجود في نظام الفوترة السعودي',
+      SBS002: 'عدم توافق الإجراء مع التشخيص',
+      SBS003: 'توثيق سريري غير مكتمل',
+      SBS004: 'انتهاك قواعد الفوترة',
+      SBS005: 'انتهاك قواعد التوقيت للإجراءات المتعددة'
+    }
+  },
+  
+  learning: {
+    portal: 'بوابة التعلم',
+    learning_path: 'مسار التعلم',
+    skill_gaps: 'فجوات المهارات',
+    progress: 'التقدم',
+    simulator: 'محاكي الترميز',
+    certification: 'الشهادة',
+    modules: 'الوحدات',
+    estimated_time: 'الوقت المقدر',
+    difficulty: 'الصعوبة',
+    prerequisites: 'المتطلبات الأساسية',
+    completion_date: 'تاريخ الإكمال',
+    success_probability: 'احتمالية النجاح',
+    
+    skill_types: {
+      medical_terminology: 'المصطلحات الطبية',
+      anatomy_knowledge: 'معرفة التشريح',
+      sbs_coding: 'ترميز نظام الفوترة السعودي',
+      icd_10_am: 'ICD-10-AM',
+      chi_regulations: 'لوائح مجلس الضمان الصحي'
+    },
+    
+    difficulty_levels: {
+      beginner: 'مبتدئ',
+      intermediate: 'متوسط',
+      advanced: 'متقدم',
+      expert: 'خبير'
+    },
+    
+    learning_styles: {
+      visual: 'بصري',
+      auditory: 'سمعي',
+      kinesthetic: 'حركي',
+      read_write: 'قراءة وكتابة'
+    }
+  },
+  
+  sbs: {
+    version_2_0: 'النسخة 2.0',
+    version_3_0: 'النسخة 3.0',
+    chapter_26: 'الفصل 26 - خدمات التأهيل',
+    ems_services: 'خدمات الطوارئ',
+    mortuary_services: 'خدمات المشرحة',
+    dental_services: 'خدمات الأسنان',
+    laboratory_services: 'خدمات المختبر',
+    
+    coding_standards: {
+      with_hierarchy: 'تسلسل "مع"',
+      bilateral_rules: 'قواعد الإجراءات الثنائية',
+      non_billable_codes: 'أكواد غير قابلة للفوترة',
+      rehabilitation_packages: 'حزم التأهيل'
+    }
+  },
+  
+  navigation: {
+    home: 'الرئيسية',
+    audit: 'التدقيق',
+    learning: 'التعلم',
+    reports: 'التقارير',
+    analytics: 'التحليلات',
+    administration: 'الإدارة',
+    profile: 'الملف الشخصي'
+  },
+  
+  dates: {
+    today: 'اليوم',
+    yesterday: 'أمس',
+    last_7_days: 'آخر 7 أيام',
+    last_30_days: 'آخر 30 يوم',
+    last_quarter: 'آخر ربع سنة',
+    last_year: 'آخر سنة',
+    custom_range: 'نطاق مخصص'
+  },
+  
+  regions: {
+    riyadh: 'الرياض',
+    jeddah: 'جدة',
+    dammam: 'الدمام',
+    mecca: 'مكة',
+    medina: 'المدينة المنورة',
+    eastern_province: 'المنطقة الشرقية',
+    northern_region: 'المنطقة الشمالية',
+    southern_region: 'المنطقة الجنوبية'
+  }
+};
+
+// English translations
+const englishTranslations = {
+  common: {
+    loading: 'Loading...',
+    error: 'An error occurred',
+    save: 'Save',
+    cancel: 'Cancel',
+    delete: 'Delete',
+    edit: 'Edit',
+    view: 'View',
+    search: 'Search',
+    filter: 'Filter',
+    sort: 'Sort',
+    export: 'Export',
+    import: 'Import',
+    settings: 'Settings',
+    help: 'Help',
+    logout: 'Logout'
+  },
+  
+  audit: {
+    dashboard: 'Audit Dashboard',
+    compliance_score: 'Compliance Score',
+    risk_level: 'Risk Level',
+    sample_size: 'Sample Size',
+    total_errors: 'Total Errors',
+    corrective_actions: 'Corrective Actions',
+    fraud_detection: 'Fraud Detection',
+    audit_outcome: 'Audit Outcome',
+    audit_date: 'Audit Date',
+    provider_id: 'Provider ID',
+    sbs_version: 'SBS Version',
+    region: 'Region',
+    
+    outcomes: {
+      COMPLIANT: 'Compliant',
+      MINOR_ISSUES: 'Minor Issues',
+      NEEDS_IMPROVEMENT: 'Needs Improvement',
+      NON_COMPLIANT: 'Non-Compliant',
+      CRITICAL: 'Critical'
+    },
+    
+    risk_levels: {
+      low: 'Low',
+      medium: 'Medium',
+      high: 'High',
+      critical: 'Critical'
+    },
+    
+    error_types: {
+      SBS001: 'Code does not exist in Saudi Billing System',
+      SBS002: 'Procedure not appropriate for diagnosis',
+      SBS003: 'Incomplete clinical documentation',
+      SBS004: 'Billing compliance violation',
+      SBS005: 'Violation of timing rules for multiple procedures'
+    }
+  },
+  
+  learning: {
+    portal: 'Learning Portal',
+    learning_path: 'Learning Path',
+    skill_gaps: 'Skill Gaps',
+    progress: 'Progress',
+    simulator: 'Coding Simulator',
+    certification: 'Certification',
+    modules: 'Modules',
+    estimated_time: 'Estimated Time',
+    difficulty: 'Difficulty',
+    prerequisites: 'Prerequisites',
+    completion_date: 'Completion Date',
+    success_probability: 'Success Probability',
+    
+    skill_types: {
+      medical_terminology: 'Medical Terminology',
+      anatomy_knowledge: 'Anatomy Knowledge',
+      sbs_coding: 'SBS Coding',
+      icd_10_am: 'ICD-10-AM',
+      chi_regulations: 'CHI Regulations'
+    },
+    
+    difficulty_levels: {
+      beginner: 'Beginner',
+      intermediate: 'Intermediate',
+      advanced: 'Advanced',
+      expert: 'Expert'
+    },
+    
+    learning_styles: {
+      visual: 'Visual',
+      auditory: 'Auditory',
+      kinesthetic: 'Kinesthetic',
+      read_write: 'Read/Write'
+    }
+  },
+  
+  sbs: {
+    version_2_0: 'Version 2.0',
+    version_3_0: 'Version 3.0',
+    chapter_26: 'Chapter 26 - Rehabilitation Services',
+    ems_services: 'Emergency Services',
+    mortuary_services: 'Mortuary Services',
+    dental_services: 'Dental Services',
+    laboratory_services: 'Laboratory Services',
+    
+    coding_standards: {
+      with_hierarchy: '"With" Hierarchy',
+      bilateral_rules: 'Bilateral Procedures Rules',
+      non_billable_codes: 'Non-Billable Codes',
+      rehabilitation_packages: 'Rehabilitation Packages'
+    }
+  },
+  
+  navigation: {
+    home: 'Home',
+    audit: 'Audit',
+    learning: 'Learning',
+    reports: 'Reports',
+    analytics: 'Analytics',
+    administration: 'Administration',
+    profile: 'Profile'
+  },
+  
+  dates: {
+    today: 'Today',
+    yesterday: 'Yesterday',
+    last_7_days: 'Last 7 days',
+    last_30_days: 'Last 30 days',
+    last_quarter: 'Last quarter',
+    last_year: 'Last year',
+    custom_range: 'Custom Range'
+  },
+  
+  regions: {
+    riyadh: 'Riyadh',
+    jeddah: 'Jeddah',
+    dammam: 'Dammam',
+    mecca: 'Mecca',
+    medina: 'Medina',
+    eastern_province: 'Eastern Province',
+    northern_region: 'Northern Region',
+    southern_region: 'Southern Region'
+  }
+};
+
+// i18n initialization
+i18n
+  .use(LanguageDetector)
+  .use(initReactI18next)
+  .init({
+    resources: {
+      ar: { translation: arabicTranslations },
+      en: { translation: englishTranslations }
+    },
+    fallbackLng: 'en',
+    interpolation: {
+      escapeValue: false
+    },
+    detection: {
+      order: ['localStorage', 'navigator', 'htmlTag'],
+      caches: ['localStorage']
+    },
+    react: {
+      useSuspense: false
+    }
+  });
+
+// Direction utility
+export const getDirection = (lang) => {
+  return lang === 'ar' ? 'rtl' : 'ltr';
+};
+
+// Format numbers in Arabic
+export const formatArabicNumber = (number) => {
+  const arabicNumbers = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
+  return number.toString().replace(/\d/g, (d) => arabicNumbers[d]);
+};
+
+// Format Hijri date
+export const formatHijriDate = (date) => {
+  const hijriMonths = [
+‎    'محرم', 'صفر', 'ربيع الأول', 'ربيع الآخر', 'جمادى الأولى', 'جمادى الآخرة',
+‎    'رجب', 'شعبان', 'رمضان', 'شوال', 'ذو القعدة', 'ذو الحجة'
+  ];
+  
+  // This is a simplified version - in production, use a library like hijri-date
+  const hijriDate = new Intl.DateTimeFormat('ar-SA-u-ca-islamic', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric'
+  }).format(date);
+  
+  return hijriDate;
+};
+
+// Currency formatting for Saudi Riyal
+export const formatSAR = (amount, lang = 'en') => {
+  const formatter = new Intl.NumberFormat(lang === 'ar' ? 'ar-SA' : 'en-SA', {
+    style: 'currency',
+    currency: 'SAR',
+    minimumFractionDigits: 2
+  });
+  
+  return formatter.format(amount);
+};
+
+export default i18n;
+2.2 RTL Support & Arabic CSS
+RTL SCSS Mixins
+scss
+// src/styles/rtl.scss
+// RTL Direction Mixins
+$rtl: '[dir="rtl"]';
+$ltr: '[dir="ltr"]';
+
+// Flip property for RTL
+@mixin rtl($property, $ltr-value, $rtl-value) {
+  #{$ltr} & {
+    #{$property}: $ltr-value;
+  }
+  #{$rtl} & {
+    #{$property}: $rtl-value;
+  }
+}
+
+// Flip both properties (like margin-left/right)
+@mixin rtl-symmetric($property, $first, $second, $ltr-first, $ltr-second, $rtl-first, $rtl-second) {
+  #{$ltr} & {
+    #{$property}-#{$first}: $ltr-first;
+    #{$property}-#{$second}: $ltr-second;
+  }
+  #{$rtl} & {
+    #{$property}-#{$first}: $rtl-first;
+    #{$property}-#{$second}: $rtl-second;
+  }
+}
+
+// RTL float
+@mixin rtl-float($ltr-value: left, $rtl-value: right) {
+  @include rtl(float, $ltr-value, $rtl-value);
+}
+
+// RTL text-align
+@mixin rtl-text-align($ltr-value: left, $rtl-value: right) {
+  @include rtl(text-align, $ltr-value, $rtl-value);
+}
+
+// RTL position
+@mixin rtl-position($property, $ltr-value, $rtl-value) {
+  @include rtl(#{$property}, $ltr-value, $rtl-value);
+}
+
+// RTL transform
+@mixin rtl-transform($ltr-transform, $rtl-transform) {
+  #{$ltr} & {
+    transform: $ltr-transform;
+  }
+  #{$rtl} & {
+    transform: $rtl-transform;
+  }
+}
+
+// Arabic font faces
+@font-face {
+  font-family: 'Cairo';
+  src: url('/fonts/Cairo-Regular.woff2') format('woff2'),
+       url('/fonts/Cairo-Regular.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Cairo';
+  src: url('/fonts/Cairo-Bold.woff2') format('woff2'),
+       url('/fonts/Cairo-Bold.woff') format('woff');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Amiri';
+  src: url('/fonts/Amiri-Regular.woff2') format('woff2'),
+       url('/fonts/Amiri-Regular.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+// Base RTL styles
+[dir="rtl"] {
+  direction: rtl;
+  text-align: right;
+  
+  // Typography
+  font-family: 'Cairo', 'Arial', sans-serif;
+  
+  // Lists
+  ul, ol {
+    padding-right: 20px;
+    padding-left: 0;
+  }
+  
+  // Forms
+  input, textarea, select {
+    text-align: right;
+  }
+  
+  // Bootstrap overrides
+  .mr-1 { margin-right: 0 !important; margin-left: 0.25rem !important; }
+  .mr-2 { margin-right: 0 !important; margin-left: 0.5rem !important; }
+  .mr-3 { margin-right: 0 !important; margin-left: 1rem !important; }
+  .mr-4 { margin-right: 0 !important; margin-left: 1.5rem !important; }
+  .mr-5 { margin-right: 0 !important; margin-left: 3rem !important; }
+  
+  .ml-1 { margin-left: 0 !important; margin-right: 0.25rem !important; }
+  .ml-2 { margin-left: 0 !important; margin-right: 0.5rem !important; }
+  .ml-3 { margin-left: 0 !important; margin-right: 1rem !important; }
+  .ml-4 { margin-left: 0 !important; margin-right: 1.5rem !important; }
+  .ml-5 { margin-left: 0 !important; margin-right: 3rem !important; }
+  
+  .pr-1 { padding-right: 0 !important; padding-left: 0.25rem !important; }
+  .pr-2 { padding-right: 0 !important; padding-left: 0.5rem !important; }
+  .pr-3 { padding-right: 0 !important; padding-left: 1rem !important; }
+  .pr-4 { padding-right: 0 !important; padding-left: 1.5rem !important; }
+  .pr-5 { padding-right: 0 !important; padding-left: 3rem !important; }
+  
+  .pl-1 { padding-left: 0 !important; padding-right: 0.25rem !important; }
+  .pl-2 { padding-left: 0 !important; padding-right: 0.5rem !important; }
+  .pl-3 { padding-left: 0 !important; padding-right: 1rem !important; }
+  .pl-4 { padding-left: 0 !important; padding-right: 1.5rem !important; }
+  .pl-5 { padding-left: 0 !important; padding-right: 3rem !important; }
+  
+  .text-left { text-align: right !important; }
+  .text-right { text-align: left !important; }
+  
+  .float-left { float: right !important; }
+  .float-right { float: left !important; }
+  
+  // Custom components
+  .btn-group {
+    > .btn:not(:first-child) {
+      margin-right: -1px;
+      margin-left: 0;
+      border-radius: 0.25rem 0 0 0.25rem;
+    }
+    > .btn:not(:last-child) {
+      border-radius: 0 0.25rem 0.25rem 0;
+    }
+  }
+}
+
+// Arabic specific typography classes
+.arabic-text {
+  font-family: 'Cairo', 'Arial', sans-serif;
+  line-height: 1.8;
+  letter-spacing: 0;
+  
+  &.title {
+    font-family: 'Amiri', 'Cairo', serif;
+    font-weight: 700;
+  }
+  
+  &.subtitle {
+    font-family: 'Cairo', sans-serif;
+    font-weight: 600;
+  }
+}
+
+// Bidirectional text support
+.bidi-text {
+  unicode-bidi: isolate;
+  
+  &.mixed {
+    unicode-bidi: plaintext;
+  }
+}
+
+// RTL form controls
+.rtl-select {
+  background-position: left 0.75rem center;
+  
+  [dir="rtl"] & {
+    background-position: right 0.75rem center;
+  }
+}
+
+// Arabic numbers
+.arabic-numbers {
+  font-feature-settings: 'numr' 1, 'frac' 1;
+}
+
+// Calendar RTL support
+.hijri-calendar {
+  [dir="rtl"] & {
+    .react-datepicker {
+      direction: rtl;
+      
+      &__navigation {
+        &--previous {
+          right: 10px;
+          left: auto;
+        }
+        &--next {
+          left: 10px;
+          right: auto;
+        }
+      }
+      
+      &__month-container {
+        float: right;
+      }
+    }
+  }
+}
+2.3 Context Providers & Hooks
+Language Context
+jsx
+// src/contexts/LanguageContext.jsx
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import i18n, { getDirection } from '../services/localization/i18n';
+
+const LanguageContext = createContext();
+
+export const LanguageProvider = ({ children }) => {
+  const [language, setLanguage] = useState(() => {
+    return localStorage.getItem('preferred_language') || 'en';
+  });
+  
+  const [direction, setDirection] = useState(() => {
+    return getDirection(localStorage.getItem('preferred_language') || 'en');
+  });
+  
+  useEffect(() => {
+    // Update i18n
+    i18n.changeLanguage(language);
+    
+    // Update direction
+    const newDirection = getDirection(language);
+    setDirection(newDirection);
+    
+    // Update HTML dir attribute
+    document.documentElement.dir = newDirection;
+    document.documentElement.lang = language;
+    
+    // Update font based on language
+    if (language === 'ar') {
+      document.body.classList.add('arabic-font');
+      document.body.classList.remove('english-font');
+    } else {
+      document.body.classList.add('english-font');
+      document.body.classList.remove('arabic-font');
+    }
+    
+    // Save preference
+    localStorage.setItem('preferred_language', language);
+  }, [language]);
+  
+  const toggleLanguage = () => {
+    setLanguage(prev => prev === 'en' ? 'ar' : 'en');
+  };
+  
+  const setLanguageWithDirection = (lang) => {
+    setLanguage(lang);
+  };
+  
+  const translate = (key, options) => {
+    return i18n.t(key, options);
+  };
+  
+  const formatNumber = (number) => {
+    if (language === 'ar') {
+      // Convert to Arabic numerals
+      const arabicNumerals = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
+      return number.toString().replace(/\d/g, d => arabicNumerals[d]);
+    }
+    return new Intl.NumberFormat(language).format(number);
+  };
+  
+  const formatDate = (date, options = {}) => {
+    const formatOptions = {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      ...options
+    };
+    
+    if (language === 'ar') {
+      // Use Hijri calendar for Arabic
+      return new Intl.DateTimeFormat('ar-SA-u-ca-islamic', formatOptions).format(date);
+    }
+    
+    return new Intl.DateTimeFormat(language, formatOptions).format(date);
+  };
+  
+  const formatCurrency = (amount) => {
+    const formatter = new Intl.NumberFormat(language === 'ar' ? 'ar-SA' : 'en-SA', {
+      style: 'currency',
+      currency: 'SAR',
+      minimumFractionDigits: 2
+    });
+    
+    return formatter.format(amount);
+  };
+  
+  return (
+    <LanguageContext.Provider
+      value={{
+        language,
+        direction,
+        toggleLanguage,
+        setLanguage: setLanguageWithDirection,
+        t: translate,
+        formatNumber,
+        formatDate,
+        formatCurrency,
+        isRTL: direction === 'rtl'
+      }}
+    >
+      {children}
+    </LanguageContext.Provider>
+  );
+};
+
+export const useLanguage = () => {
+  const context = useContext(LanguageContext);
+  if (!context) {
+    throw new Error('useLanguage must be used within LanguageProvider');
+  }
+  return context;
+};
+SaudiRTLWrapper Component
+jsx
+// src/components/common/SaudiRTLWrapper.jsx
+import React from 'react';
+import { useLanguage } from '../../contexts/LanguageContext';
+import PropTypes from 'prop-types';
+
+const SaudiRTLWrapper = ({ children, className = '', forceDirection }) => {
+  const { direction, language } = useLanguage();
+  
+  const actualDirection = forceDirection || direction;
+  
+  return (
+    <div 
+      dir={actualDirection}
+      lang={language}
+      className={`saudi-rtl-wrapper ${actualDirection === 'rtl' ? 'arabic-mode' : 'english-mode'} ${className}`}
+    >
+      {children}
+    </div>
+  );
+};
+
+SaudiRTLWrapper.propTypes = {
+  children: PropTypes.node.isRequired,
+  className: PropTypes.string,
+  forceDirection: PropTypes.oneOf(['ltr', 'rtl'])
+};
+
+export default SaudiRTLWrapper;
+2.4 Arabic Utility Functions
+javascript
+// src/utils/arabicUtils.js
+// Arabic text utilities
+export const arabicText = {
+  // Arabic numbers 0-9
+  numbers: ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'],
+  
+  // Arabic months (Hijri)
+  hijriMonths: [
+‎    'محرم', 'صفر', 'ربيع الأول', 'ربيع الآخر', 'جمادى الأولى', 'جمادى الآخرة',
+‎    'رجب', 'شعبان', 'رمضان', 'شوال', 'ذو القعدة', 'ذو الحجة'
+  ],
+  
+  // Arabic weekdays
+  weekdays: ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'],
+  
+  // Common medical coding terms in Arabic
+  medicalTerms: {
+    diagnosis: 'تشخيص',
+    procedure: 'إجراء',
+    code: 'كود',
+    billing: 'فوترة',
+    compliance: 'مطابقة',
+    audit: 'تدقيق',
+    rehabilitation: 'تأهيل',
+    emergency: 'طوارئ',
+    laboratory: 'مختبر'
+  }
+};
+
+// Convert numbers to Arabic numerals
+export const toArabicNumerals = (number) => {
+  if (typeof number !== 'string' && typeof number !== 'number') {
+    return number;
+  }
+  
+  const str = number.toString();
+  return str.replace(/\d/g, (d) => arabicText.numbers[d]);
+};
+
+// Convert Arabic numerals to Western
+export const fromArabicNumerals = (arabicStr) => {
+  if (typeof arabicStr !== 'string') {
+    return arabicStr;
+  }
+  
+  const westernNumbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+  return arabicStr.replace(/[٠١٢٣٤٥٦٧٨٩]/g, (char) => {
+    const index = arabicText.numbers.indexOf(char);
+    return index !== -1 ? westernNumbers[index] : char;
+  });
+};
+
+// Format date in Hijri
+export const formatHijriDate = (date) => {
+  try {
+    const hijriDate = new Intl.DateTimeFormat('ar-SA-u-ca-islamic', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+      weekday: 'long'
+    }).format(date);
+    
+    return hijriDate;
+  } catch (error) {
+    // Fallback to Gregorian
+    return date.toLocaleDateString('ar-SA');
+  }
+};
+
+// Format SBS code with Arabic explanation
+export const formatSBSCode = (code, explanation) => {
+  return {
+    code,
+    arabic: `كود نظام الفوترة السعودي: ${code}`,
+    english: `SBS Code: ${code}`,
+    explanation: explanation || ''
+  };
+};
+
+// Check if text contains Arabic characters
+export const containsArabic = (text) => {
+  if (!text || typeof text !== 'string') return false;
+  
+  // Arabic Unicode range: \u0600-\u06FF
+  const arabicRegex = /[\u0600-\u06FF]/;
+  return arabicRegex.test(text);
+};
+
+// Determine text direction
+export const getTextDirection = (text) => {
+  if (!text) return 'ltr';
+  
+  const arabicRegex = /[\u0600-\u06FF]/;
+  const hebrewRegex = /[\u0590-\u05FF]/;
+  
+  if (arabicRegex.test(text) || hebrewRegex.test(text)) {
+    return 'rtl';
+  }
+  
+  return 'ltr';
+};
+
+// Truncate Arabic text properly
+export const truncateArabic = (text, maxLength, suffix = '...') => {
+  if (!text || text.length <= maxLength) return text;
+  
+  // For Arabic, we need to truncate from the beginning
+  if (containsArabic(text)) {
+    const truncated = text.substring(text.length - maxLength);
+    return suffix + truncated;
+  }
+  
+  // For Latin scripts, truncate from end
+  return text.substring(0, maxLength) + suffix;
+};
+
+// Sort Arabic text properly
+export const sortArabic = (array, key) => {
+  return array.sort((a, b) => {
+    const aValue = key ? a[key] : a;
+    const bValue = key ? b[key] : b;
+    
+    if (containsArabic(aValue) && containsArabic(bValue)) {
+      return aValue.localeCompare(bValue, 'ar');
+    }
+    
+    return aValue.localeCompare(bValue);
+  });
+};
+
+// Format phone number for Saudi Arabia
+export const formatSaudiPhone = (phone) => {
+  if (!phone) return '';
+  
+  const cleaned = phone.replace(/\D/g, '');
+  
+  if (cleaned.length === 9) {
+    // Landline: 01XXXXXXX
+    return cleaned.replace(/(\d{1})(\d{3})(\d{3})(\d{2})/, '$1 $2 $3 $4');
+  } else if (cleaned.length === 10) {
+    // Mobile: 05XXXXXXXX
+    return cleaned.replace(/(\d{2})(\d{3})(\d{3})(\d{2})/, '$1 $2 $3 $4');
+  }
+  
+  return phone;
+};
+Summary & Implementation Table
+
+
+Component
+Purpose
+Key Features
+Saudi-Specific Considerations
+AuditDashboard
+Main CHI audit interface
+Real-time simulations, Fraud detection, Arabic/English reports
+CHI Framework compliance, RTL layout, Hijri dates
+LearningPortal
+AI-powered learning interface
+Personalized paths, Skill gap analysis, Progress tracking
+Arabic learning content, Saudi case studies, RTL progress visualization
+i18n System
+Complete localization
+Arabic/English translations, RTL support, Number/date formatting
+Hijri calendar support, Arabic numerals, Currency formatting (SAR)
+RTL CSS
+Right-to-left styling
+CSS direction flip, Arabic typography, Form controls RTL
+Arabic fonts (Cairo, Amiri), Bidirectional text support
+LanguageContext
+Global language management
+Language switching, Direction control, Formatting utilities
+Automatic RTL detection, HTML dir attribute management
+Quick Start Commands:
+bash
+# Install dependencies
+npm install i18next react-i18next i18next-browser-languagedetector
+npm install @mui/material @emotion/react @emotion/styled
+npm install recharts react-query axios
+
+# Set up Arabic fonts
+mkdir -p public/fonts
+# Download Cairo and Amiri fonts to public/fonts/
+
+# Import in main index.js
+import './services/localization/i18n';
+import './styles/rtl.scss';
+import { LanguageProvider } from './contexts/LanguageContext';
+
+# Wrap your app
+ReactDOM.render(
+  <LanguageProvider>
+    <App />
+  </LanguageProvider>,
+  document.getElementById('root')
+);

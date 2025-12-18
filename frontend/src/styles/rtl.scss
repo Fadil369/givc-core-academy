@@ -1,0 +1,205 @@
+// RTL Direction Mixins
+$rtl: '[dir="rtl"]';
+$ltr: '[dir="ltr"]';
+
+// Flip property for RTL
+@mixin rtl($property, $ltr-value, $rtl-value) {
+  #{$ltr} & {
+    #{$property}: $ltr-value;
+  }
+  #{$rtl} & {
+    #{$property}: $rtl-value;
+  }
+}
+
+// Flip both properties (like margin-left/right)
+@mixin rtl-symmetric($property, $first, $second, $ltr-first, $ltr-second, $rtl-first, $rtl-second) {
+  #{$ltr} & {
+    #{$property}-#{$first}: $ltr-first;
+    #{$property}-#{$second}: $ltr-second;
+  }
+  #{$rtl} & {
+    #{$property}-#{$first}: $rtl-first;
+    #{$property}-#{$second}: $rtl-second;
+  }
+}
+
+// RTL float
+@mixin rtl-float($ltr-value: left, $rtl-value: right) {
+  @include rtl(float, $ltr-value, $rtl-value);
+}
+
+// RTL text-align
+@mixin rtl-text-align($ltr-value: left, $rtl-value: right) {
+  @include rtl(text-align, $ltr-value, $rtl-value);
+}
+
+// RTL position
+@mixin rtl-position($property, $ltr-value, $rtl-value) {
+  @include rtl(#{$property}, $ltr-value, $rtl-value);
+}
+
+// RTL transform
+@mixin rtl-transform($ltr-transform, $rtl-transform) {
+  #{$ltr} & {
+    transform: $ltr-transform;
+  }
+  #{$rtl} & {
+    transform: $rtl-transform;
+  }
+}
+
+// Arabic font faces
+@font-face {
+  font-family: 'Cairo';
+  src: url('/fonts/Cairo-Regular.woff2') format('woff2'),
+       url('/fonts/Cairo-Regular.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Cairo';
+  src: url('/fonts/Cairo-Bold.woff2') format('woff2'),
+       url('/fonts/Cairo-Bold.woff') format('woff');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Amiri';
+  src: url('/fonts/Amiri-Regular.woff2') format('woff2'),
+       url('/fonts/Amiri-Regular.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+// Base RTL styles
+[dir="rtl"] {
+  direction: rtl;
+  text-align: right;
+  
+  // Typography
+  font-family: 'Cairo', 'Arial', sans-serif;
+  
+  // Lists
+  ul, ol {
+    padding-right: 20px;
+    padding-left: 0;
+  }
+  
+  // Forms
+  input, textarea, select {
+    text-align: right;
+  }
+  
+  // Bootstrap overrides
+  .mr-1 { margin-right: 0 !important; margin-left: 0.25rem !important; }
+  .mr-2 { margin-right: 0 !important; margin-left: 0.5rem !important; }
+  .mr-3 { margin-right: 0 !important; margin-left: 1rem !important; }
+  .mr-4 { margin-right: 0 !important; margin-left: 1.5rem !important; }
+  .mr-5 { margin-right: 0 !important; margin-left: 3rem !important; }
+  
+  .ml-1 { margin-left: 0 !important; margin-right: 0.25rem !important; }
+  .ml-2 { margin-left: 0 !important; margin-right: 0.5rem !important; }
+  .ml-3 { margin-left: 0 !important; margin-right: 1rem !important; }
+  .ml-4 { margin-left: 0 !important; margin-right: 1.5rem !important; }
+  .ml-5 { margin-left: 0 !important; margin-right: 3rem !important; }
+  
+  .pr-1 { padding-right: 0 !important; padding-left: 0.25rem !important; }
+  .pr-2 { padding-right: 0 !important; padding-left: 0.5rem !important; }
+  .pr-3 { padding-right: 0 !important; padding-left: 1rem !important; }
+  .pr-4 { padding-right: 0 !important; padding-left: 1.5rem !important; }
+  .pr-5 { padding-right: 0 !important; padding-left: 3rem !important; }
+  
+  .pl-1 { padding-left: 0 !important; padding-right: 0.25rem !important; }
+  .pl-2 { padding-left: 0 !important; padding-right: 0.5rem !important; }
+  .pl-3 { padding-left: 0 !important; padding-right: 1rem !important; }
+  .pl-4 { padding-left: 0 !important; padding-right: 1.5rem !important; }
+  .pl-5 { padding-left: 0 !important; padding-right: 3rem !important; }
+  
+  .text-left { text-align: right !important; }
+  .text-right { text-align: left !important; }
+  
+  .float-left { float: right !important; }
+  .float-right { float: left !important; }
+  
+  // Custom components
+  .btn-group {
+    > .btn:not(:first-child) {
+      margin-right: -1px;
+      margin-left: 0;
+      border-radius: 0.25rem 0 0 0.25rem;
+    }
+    > .btn:not(:last-child) {
+      border-radius: 0 0.25rem 0.25rem 0;
+    }
+  }
+}
+
+// Arabic specific typography classes
+.arabic-text {
+  font-family: 'Cairo', 'Arial', sans-serif;
+  line-height: 1.8;
+  letter-spacing: 0;
+  
+  &.title {
+    font-family: 'Amiri', 'Cairo', serif;
+    font-weight: 700;
+  }
+  
+  &.subtitle {
+    font-family: 'Cairo', sans-serif;
+    font-weight: 600;
+  }
+}
+
+// Bidirectional text support
+.bidi-text {
+  unicode-bidi: isolate;
+  
+  &.mixed {
+    unicode-bidi: plaintext;
+  }
+}
+
+// RTL form controls
+.rtl-select {
+  background-position: left 0.75rem center;
+  
+  [dir="rtl"] & {
+    background-position: right 0.75rem center;
+  }
+}
+
+// Arabic numbers
+.arabic-numbers {
+  font-feature-settings: 'numr' 1, 'frac' 1;
+}
+
+// Calendar RTL support
+.hijri-calendar {
+  [dir="rtl"] & {
+    .react-datepicker {
+      direction: rtl;
+      
+      &__navigation {
+        &--previous {
+          right: 10px;
+          left: auto;
+        }
+        &--next {
+          left: 10px;
+          right: auto;
+        }
+      }
+      
+      &__month-container {
+        float: right;
+      }
+    }
+  }
+}

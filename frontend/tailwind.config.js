@@ -10,14 +10,14 @@ module.exports = {
     extend: {
       colors: {
         primary: {
-          midnight: '#1a365d',
-          medical: '#2b6cb8',
-          signal: '#0ea5e9',
+          midnight: '#0a2463', // $bcc-primary-color
+          medical: '#20a4f3',  // $bcc-medical-teal
+          signal: '#00b4d8',   // $bcc-secondary-color
         },
         accent: {
-          deepOrange: '#ea580c',
-          successGreen: '#10b981',
-          warningAmber: '#f59e0b',
+          deepOrange: '#ff6b35', // $bcc-accent-color
+          successGreen: '#2a9d8f', // $bcc-success-color
+          saudiGreen: '#006c35',   // $bcc-saudi-green
         },
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',

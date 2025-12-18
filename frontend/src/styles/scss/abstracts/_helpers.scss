@@ -1,0 +1,11 @@
+// Helpers for CSS variables
+@mixin cssvars($css-variables, $prefix: $brand-prefix) {
+  :root {
+    @each $name, $value in $css-variables {
+      --#{$prefix}-#{$name}: #{$value};
+    }
+  }
+}
+@function cssvar($name, $prefix: $brand-prefix) {
+  @return var(--#{$prefix}-#{$name});
+}

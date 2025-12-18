@@ -33,18 +33,18 @@ export default function HomePage() {
             </div>
           </div>
 
-          <div className="flex gap-4 justify-center">
-            <Link
-              href="/auth/register"
-              className="bg-accent-successGreen hover:bg-accent-successGreen/90 text-white font-bold py-3 px-8 rounded-lg transition"
+          <div className="flex flex-wrap gap-4 justify-center">
+             <Link
+              href="/audit"
+              className="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded-lg transition"
             >
-              <span className="font-arabic">ابدأ الآن</span> / Start Now
+              <span className="font-arabic">لوحة التدقيق</span> / Audit Dashboard
             </Link>
-            <Link
-              href="/auth/login"
-              className="bg-white/20 hover:bg-white/30 text-white font-bold py-3 px-8 rounded-lg transition backdrop-blur-md"
+             <Link
+              href="/learning"
+              className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg transition"
             >
-              <span className="font-arabic">تسجيل الدخول</span> / Login
+              <span className="font-arabic">بوابة التعلم</span> / Learning Portal
             </Link>
           </div>
         </div>
