@@ -12,7 +12,7 @@ This blueprint realigns GIVC Core Academy with the updated **SBS-Centric Medical
   - SBSCS/ICD-10-AM integration services with version pinning and diff/migration tools (v2.0/v3.0).
   - Corporate billing with VAT, LTC insurance, and regional pricing; auditable invoice/receipt payloads.
   - Audit/compliance APIs exposing CHI/MOH/SCFHS evidence (immutable log stream).
-  - Coding simulation engine for SBS, ICD-10-AM, AR-DRG with latency budgets <2s; Arabic code search p99 <500ms.
+  - Coding simulation engine for SBS, ICD-10-AM, AR-DRG aligned to Success Criteria latency budgets.
 
 ### Frontend (Next.js 14, App Router)
 - Bilingual (Arabic/English) with RTL/LTR switching; BrainSAIT design tokens for typography, spacing, and components.
@@ -26,7 +26,7 @@ This blueprint realigns GIVC Core Academy with the updated **SBS-Centric Medical
 
 ### Infrastructure
 - Docker/K8s baselines with Saudi data residency; NCSS-aligned security hardening (TLS 1.3, AES-256 at rest, RBAC, secrets in K8s/Vault).
-- Observability: Prometheus scraping, Grafana dashboards, SIEM-forwarded audit logs, SLOs for search (<500ms) and APIs (<2s).
+- Observability: Prometheus scraping, Grafana dashboards, SIEM-forwarded audit logs, and SLO dashboards measured against the Success Criteria latency budgets.
 - Encryption, audit logging, and role enforcement are mandatory middleware; workloads isolated per environment with least-privilege service accounts.
 
 ## Modules & Deliverables
@@ -37,6 +37,7 @@ This blueprint realigns GIVC Core Academy with the updated **SBS-Centric Medical
 - **Analytics**: Regional KPIs, corporate dashboards, learner progress, billing performance, and SLA monitoring.
 
 ## Roadmap (Phased)
+Timelines assume parallel workstreams with buffer for compliance reviews, security sign-off, and UAT feedback loops.
 1. **Foundations (Week 1-2)**: PostGIS-ready DB layer, Redis Cluster config, JWT+OAuth2+SCFHS ID plumbing, baseline audit logger + CHI hooks.
 2. **Compliance & Data Residency (Week 3-4)**: NCSS hardening, encryption everywhere, immutable audit stream, PHI masking, consent & access logs in UI.
 3. **Feature Completion (Week 5-7)**: SBS v2/v3 migration tools, rehab (Chapter 26) library, corporate billing/LTC, coding simulator with latency budgets.
