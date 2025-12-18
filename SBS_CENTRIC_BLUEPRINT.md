@@ -40,7 +40,7 @@ This blueprint realigns GIVC Core Academy with the updated **SBS-Centric Medical
 Timelines assume parallel workstreams with buffer for compliance reviews, security sign-off, and UAT feedback loops.
 1. **Foundations (Week 1-2)**: PostGIS-ready DB layer, Redis Cluster config, JWT+OAuth2+SCFHS ID plumbing, baseline audit logger + CHI hooks.
 2. **Compliance & Data Residency (Week 3-4)**: NCSS hardening, encryption everywhere, immutable audit stream, PHI masking, consent & access logs in UI.
-3. **Feature Completion (Week 5-7)**: SBS v2/v3 migration tools, rehab (Chapter 26) library, corporate billing/LTC, coding simulator with latency budgets.
+3. **Feature Completion (Week 5-7)**: SBS v2/v3 migration tools, rehab (Chapter 26) library, corporate billing/LTC, coding simulator tuned to the Success Criteria SLOs.
 4. **Observability & Launch (Week 8)**: Prometheus/Grafana dashboards, Storybook alignment to BrainSAIT tokens, performance tuning to hit the Success Criteria SLOs, UAT with 50 KSA clients.
 
 ## Success Criteria
