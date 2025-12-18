@@ -1,0 +1,32 @@
+{
+  "expo": {
+    "name": "GIVC Core Academy",
+    "slug": "givc-core-academy",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#1a365d"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.givc.coreacademy"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#1a365d"
+      },
+      "package": "com.givc.coreacademy"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    }
+  }
+}
