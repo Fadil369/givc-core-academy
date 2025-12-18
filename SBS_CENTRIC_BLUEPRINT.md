@@ -5,7 +5,7 @@ This blueprint realigns GIVC Core Academy with the updated **SBS-Centric Medical
 ## Architecture & Platform Alignment
 
 ### Backend (FastAPI async)
-- **Data**: PostgreSQL 15 + PostGIS for spatial/region-aware rules; keep SQLite only for local development. Connection URLs must support read replicas to receive traffic in KSA regions.
+- **Data**: PostgreSQL 15 + PostGIS for spatial/region-aware rules; keep SQLite only for local development. Connection URLs must support PostgreSQL primary + read-replica hosts with read preference to KSA regions via connection pooling/load balancing.
 - **Caching/Queue**: Redis Cluster for low-latency Arabic search caching; Celery workers for batch SBS migration, audits, and notifications.
 - **Identity & Auth**: JWT + OAuth2 + SCFHS ID federation; enforce MFA for admins/auditors. Include CHI audit governance hooks on auth events.
 - **Compliance Modules**:
@@ -37,14 +37,16 @@ This blueprint realigns GIVC Core Academy with the updated **SBS-Centric Medical
 - **Analytics**: Regional KPIs, corporate dashboards, learner progress, billing performance, and SLA monitoring.
 
 ## Roadmap (Phased)
-Timelines assume parallel workstreams with buffer for compliance reviews, security sign-off, and UAT feedback loops; expect phases 2-3 to flex by +1-2 weeks to accommodate audit findings.
+Timeline assumptions:
+- Parallel workstreams with buffer for compliance reviews, security sign-off, and UAT feedback loops.
+- Phases 2-3 may flex by +1-2 weeks to accommodate audit findings.
 1. **Foundations (Week 1-2)**: PostGIS-ready DB layer, Redis Cluster config, JWT+OAuth2+SCFHS ID plumbing, baseline audit logger + CHI hooks.
 2. **Compliance & Data Residency (Week 3-4)**: NCSS hardening, encryption everywhere, immutable audit stream, PHI masking, consent & access logs in UI.
 3. **Feature Completion (Week 5-7)**: SBS v2/v3 migration tools, rehab (Chapter 26) library, corporate billing/LTC, coding simulator tuned to the Success Criteria SLOs.
 4. **Observability & Launch (Week 8)**: Prometheus/Grafana dashboards, Storybook alignment to BrainSAIT tokens, performance tuning to hit the Success Criteria SLOs, UAT with 50 KSA clients.
 
 ## Success Criteria
-- Performance SLOs (p99): Arabic code search endpoints (e.g., `/api/v1/codes/search`) <500ms; learner/corporate APIs <2s across regions, measured from KSA PoPs over TLS under steady-state production load.
+- Performance SLOs (p99): Arabic code search endpoints (e.g., `/api/v1/codes/search`) <500ms; learner/corporate APIs <2s across regions, measured from KSA POPs over TLS under steady-state production load.
 - 99.9% SBS mapping accuracy.
 - Full CHI/MOH/SCFHS/NPHIES compliance evidence available via audit APIs.
 - Bilingual UX with RTL/LTR parity and accessibility conforming to BrainSAIT standards.
