@@ -5,7 +5,7 @@ This blueprint realigns GIVC Core Academy with the updated **SBS-Centric Medical
 ## Architecture & Platform Alignment
 
 ### Backend (FastAPI async)
-- **Data**: PostgreSQL 15 + PostGIS for spatial/region-aware rules; keep SQLite only for local development. Connection URLs must support read replicas in KSA regions.
+- **Data**: PostgreSQL 15 + PostGIS for spatial/region-aware rules; keep SQLite only for local development. Connection URLs must support read replicas to receive traffic in KSA regions.
 - **Caching/Queue**: Redis Cluster for low-latency Arabic search caching; Celery workers for batch SBS migration, audits, and notifications.
 - **Identity & Auth**: JWT + OAuth2 + SCFHS ID federation; enforce MFA for admins/auditors. Include CHI audit governance hooks on auth events.
 - **Compliance Modules**:
