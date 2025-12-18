@@ -9,7 +9,7 @@ This blueprint realigns GIVC Core Academy with the updated **SBS-Centric Medical
   - PostgreSQL 15 + PostGIS for spatial/region-aware rules; SQLite only for local development.
   - Connection URLs must support PostgreSQL primary + read-replica hosts with read preference to KSA regions via connection pooling/load balancing.
 - **Caching/Queue**: Redis Cluster for low-latency Arabic search caching; Celery workers for batch SBS migration, audits, and notifications.
-- **Identity & Auth**: JWT + OAuth2 + SCFHS ID federation; enforce MFA for admins/auditors. Include CHI audit governance hooks on auth events.
+- **Identity & Auth**: JWT + OAuth2 + SCFHS ID federation; enforce MFA for admins/auditors. Includes CHI audit governance hooks on auth events.
 - **Compliance Modules**:
   - SBSCS/ICD-10-AM integration services with version pinning and diff/migration tools (v2.0/v3.0).
   - Corporate billing with VAT, LTC insurance, and regional pricing; auditable invoice/receipt payloads.
@@ -17,7 +17,7 @@ This blueprint realigns GIVC Core Academy with the updated **SBS-Centric Medical
   - Coding simulation engine for SBS, ICD-10-AM, AR-DRG tuned to the Performance SLOs.
 
 ### Frontend (Next.js 14, App Router)
-- **BrainSAIT design system**: bilingual RTL/LTR-compliant tokens and components with accessibility baselines used across web and mobile surfaces; maintained by product design as the single source of truth.
+- **BrainSAIT design system**: bilingual RTL/LTR-compliant tokens and components with accessibility baselines used across web and mobile surfaces. Maintained by product design as the single source of truth.
 - Bilingual (Arabic/English) with RTL/LTR switching; typography and spacing honor the design system tokens.
 - Compliance-ready UI: consent capture, PHI masking, access logs surfacing, and audit trails per screen.
 - Advanced dashboards: Prometheus/Grafana data surfaces for performance, audit heatmaps, corporate KPIs; Storybook-powered UI catalog kept in sync with BrainSAIT tokens.
@@ -45,7 +45,7 @@ This blueprint realigns GIVC Core Academy with the updated **SBS-Centric Medical
 
 ## Roadmap (Phased)
 Timeline assumptions:
-- Parallel workstreams with buffer for compliance reviews, security sign-off, and UAT feedback loops.
+- Parallel workstreams with buffers for compliance reviews, security sign-off, and UAT feedback loops.
 - Phases 2-3 may flex by +1-2 weeks to accommodate audit findings.
 1. **Foundations (Week 1-2)**: PostGIS-ready DB layer, Redis Cluster config, JWT+OAuth2+SCFHS ID plumbing, baseline audit logger + CHI hooks.
 2. **Compliance & Data Residency (Week 3-4)**: NCSS hardening, encryption everywhere, immutable audit stream, PHI masking, consent & access logs in UI.
