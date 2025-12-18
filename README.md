@@ -13,6 +13,8 @@
 
 GIVC Core Academy is a comprehensive Saudi healthcare insurance and medical coding training platform. It provides specialized training in ICD-10-AM, SBS (Saudi Billing System), and AR-DRG coding systems with support for multiple training modalities.
 
+For the updated SBS-centric architecture, compliance scope, and phased rollout, see **[SBS_CENTRIC_BLUEPRINT.md](./SBS_CENTRIC_BLUEPRINT.md)**.
+
 ### Key Features
 
 - 🎓 **Multi-Modal Training**: Virtual Live, Self-Paced, Bootcamp, and Blended learning
