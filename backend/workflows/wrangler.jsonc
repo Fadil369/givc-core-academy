@@ -1,0 +1,41 @@
+{
+    "$schema": "node_modules/wrangler/config-schema.json",
+    "name": "givc-linc-workflows",
+    "main": "src/index.ts",
+    "compatibility_date": "2024-12-14",
+    "compatibility_flags": [
+        "nodejs_compat"
+    ],
+    "account_id": "d7b99530559ab4f2545e9bdc72a7ab9b",
+    "workflows": [
+        {
+            "name": "claims-workflow",
+            "binding": "CLAIMS_WORKFLOW",
+            "class_name": "ClaimsWorkflow"
+        },
+        {
+            "name": "audit-workflow",
+            "binding": "AUDIT_WORKFLOW",
+            "class_name": "AuditWorkflow"
+        },
+        {
+            "name": "learning-workflow",
+            "binding": "LEARNING_WORKFLOW",
+            "class_name": "LearningWorkflow"
+        }
+    ],
+    "d1_databases": [
+        {
+            "binding": "DB",
+            "database_name": "his_database",
+            "database_id": "f79d9487-fd6e-45e0-aaf1-ea9f2a69493d"
+        }
+    ],
+    "vars": {
+        "ENVIRONMENT": "production"
+    },
+    "observability": {
+        "enabled": true,
+        "head_sampling_rate": 1.0
+    }
+}

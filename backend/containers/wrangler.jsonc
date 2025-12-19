@@ -1,0 +1,48 @@
+{
+    "$schema": "node_modules/wrangler/config-schema.json",
+    "name": "givc-linc-agents-container",
+    "main": "src/index.ts",
+    "compatibility_date": "2024-12-14",
+    "compatibility_flags": [
+        "nodejs_compat"
+    ],
+    "account_id": "d7b99530559ab4f2545e9bdc72a7ab9b",
+    "containers": [
+        {
+            "class_name": "LincContainer",
+            "image": "./container_src/Dockerfile",
+            "max_instances": 5
+        }
+    ],
+    "durable_objects": {
+        "bindings": [
+            {
+                "class_name": "LincContainer",
+                "name": "LINC_CONTAINER"
+            }
+        ]
+    },
+    "migrations": [
+        {
+            "new_sqlite_classes": [
+                "LincContainer"
+            ],
+            "tag": "v1"
+        }
+    ],
+    "d1_databases": [
+        {
+            "binding": "DB",
+            "database_name": "his_database",
+            "database_id": "f79d9487-fd6e-45e0-aaf1-ea9f2a69493d"
+        }
+    ],
+    "vars": {
+        "ENVIRONMENT": "production",
+        "API_VERSION": "v1"
+    },
+    "observability": {
+        "enabled": true,
+        "head_sampling_rate": 1.0
+    }
+}

@@ -1,15 +1,16 @@
 {
-  "name": "givc-linc-agents-container",
+  "name": "givc-linc-workflows",
   "version": "1.0.0",
-  "description": "GIVC Core Academy + LINC Agents on Cloudflare Containers",
+  "description": "GIVC Core Academy + LINC Agents using Cloudflare Workflows",
   "type": "module",
   "main": "src/index.ts",
   "scripts": {
     "dev": "wrangler dev",
-    "build": "tsc",
     "deploy": "wrangler deploy",
     "logs": "wrangler tail",
-    "types": "wrangler types"
+    "types": "wrangler types",
+    "workflows:list": "wrangler workflows list",
+    "workflows:instances": "wrangler workflows instances list"
   },
   "dependencies": {
     "@cloudflare/workers-types": "^4.20241218.0"
