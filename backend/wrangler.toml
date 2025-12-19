@@ -1,14 +1,101 @@
-name = "givc-core-academy-backend"
-main = "worker.py"
-compatibility_date = "2024-03-12"
-compatibility_flags = ["python_workers"]
+# GIVC Core Academy + BrainSAIT LINC Agents - Unified Cloudflare Worker
+# Combines medical coding academy with healthcare LINC agents
+
+name = "givc-core-academy-unified"
+main = "worker.js"
+compatibility_date = "2024-12-14"
+compatibility_flags = ["nodejs_compat"]
+
+# Account Configuration
 account_id = "d7b99530559ab4f2545e9bdc72a7ab9b"
 
+# Enable workers.dev subdomain for initial deployment
+workers_dev = true
+
+# Custom Domain Routes (uncomment when domain is configured)
+# routes = [
+#   { pattern = "api.givc.elfadil.com/*", zone_id = "2df8e1ec714a9612535cdb04ef84c9d1" }
+# ]
+
+# ============================================================================
+# D1 DATABASE
+# ============================================================================
 [[d1_databases]]
 binding = "DB"
 database_name = "his_database"
 database_id = "f79d9487-fd6e-45e0-aaf1-ea9f2a69493d"
 
+# ============================================================================
+# KV NAMESPACES (Optional - for caching and sessions)
+# ============================================================================
+# Create with: wrangler kv namespace create "LINC_CACHE"
+# [[kv_namespaces]]
+# binding = "LINC_CACHE"
+# id = "REPLACE_WITH_LINC_CACHE_ID"
+
+# [[kv_namespaces]]
+# binding = "LINC_SESSIONS"
+# id = "REPLACE_WITH_LINC_SESSIONS_ID"
+
+# [[kv_namespaces]]
+# binding = "LINC_TRANSLATIONS"
+# id = "REPLACE_WITH_LINC_TRANSLATIONS_ID"
+
+# ============================================================================
+# R2 BUCKETS (Optional - for file storage)
+# ============================================================================
+# Create with: wrangler r2 bucket create linc-uploads
+# [[r2_buckets]]
+# binding = "UPLOADS"
+# bucket_name = "linc-uploads"
+
+# [[r2_buckets]]
+# binding = "BACKUPS"
+# bucket_name = "linc-backups"
+
+# [[r2_buckets]]
+# binding = "DICOM"
+# bucket_name = "linc-dicom"
+
+# ============================================================================
+# ENVIRONMENT VARIABLES (Public)
+# ============================================================================
 [vars]
 ENVIRONMENT = "production"
 API_VERSION = "v1"
+DOMAIN = "elfadil.com"
+
+# Backend Agent URLs (LINC Agents)
+MASTERLINC_URL = "https://masterlinc.elfadil.com"
+HEALTHCARELINC_URL = "https://healthcarelinc.elfadil.com"
+CLAIMLINC_URL = "https://claimlinc.elfadil.com"
+TTLINC_URL = "https://ttlinc.elfadil.com"
+POLICYLINC_URL = "https://policylinc.elfadil.com"
+CLINICALLINC_URL = "https://clinicallinc.elfadil.com"
+RADIOLINC_URL = "https://radiolinc.elfadil.com"
+
+# N8N Integration
+N8N_SERVER_URL = "https://n8n.srv791040.hstgr.cloud/mcp-server/http"
+
+# ============================================================================
+# SECRETS (Set via CLI: wrangler secret put SECRET_NAME)
+# ============================================================================
+# Required secrets:
+# - wrangler secret put OPENAI_API_KEY
+# - wrangler secret put NPHIES_API_KEY
+# - wrangler secret put JWT_SECRET
+# - wrangler secret put AI_API_KEY
+# - wrangler secret put GOOGLE_MAPS_API_KEY
+
+# ============================================================================
+# OBSERVABILITY
+# ============================================================================
+[observability]
+enabled = true
+head_sampling_rate = 1.0
+
+# ============================================================================
+# LIMITS & PERFORMANCE
+# ============================================================================
+[limits]
+cpu_ms = 50
