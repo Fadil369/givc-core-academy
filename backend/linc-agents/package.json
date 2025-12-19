@@ -1,0 +1,22 @@
+{
+  "name": "givc-linc-agents",
+  "version": "2.0.0",
+  "description": "GIVC Core Academy + LINC Agents using Cloudflare Agents SDK",
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "logs": "wrangler tail",
+    "types": "wrangler types"
+  },
+  "dependencies": {
+    "agents": "^0.0.38",
+    "hono": "^4.5.0"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20241218.0",
+    "typescript": "^5.3.3",
+    "wrangler": "^4.0.0"
+  }
+}

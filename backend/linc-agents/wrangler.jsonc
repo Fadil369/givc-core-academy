@@ -1,0 +1,92 @@
+{
+    "$schema": "node_modules/wrangler/config-schema.json",
+    "name": "givc-linc-agents",
+    "main": "src/index.ts",
+    "compatibility_date": "2024-12-14",
+    "compatibility_flags": [
+        "nodejs_compat"
+    ],
+    "account_id": "d7b99530559ab4f2545e9bdc72a7ab9b",
+    // Durable Objects for Agents
+    "durable_objects": {
+        "bindings": [
+            {
+                "name": "MasterAgent",
+                "class_name": "MasterLincAgent"
+            },
+            {
+                "name": "ClaimsAgent",
+                "class_name": "ClaimsLincAgent"
+            },
+            {
+                "name": "AuditAgent",
+                "class_name": "AuditLincAgent"
+            },
+            {
+                "name": "LearningAgent",
+                "class_name": "LearningLincAgent"
+            }
+        ]
+    },
+    // Migrations for SQLite storage
+    "migrations": [
+        {
+            "tag": "v1",
+            "new_sqlite_classes": [
+                "MasterLincAgent",
+                "ClaimsLincAgent",
+                "AuditLincAgent",
+                "LearningLincAgent"
+            ]
+        }
+    ],
+    // Workflow bindings (connect to existing workflows)
+    "workflows": [
+        {
+            "name": "claims-workflow",
+            "binding": "CLAIMS_WORKFLOW",
+            "class_name": "ClaimsWorkflow",
+            "script_name": "givc-linc-workflows"
+        },
+        {
+            "name": "audit-workflow",
+            "binding": "AUDIT_WORKFLOW",
+            "class_name": "AuditWorkflow",
+            "script_name": "givc-linc-workflows"
+        },
+        {
+            "name": "learning-workflow",
+            "binding": "LEARNING_WORKFLOW",
+            "class_name": "LearningWorkflow",
+            "script_name": "givc-linc-workflows"
+        }
+    ],
+    // D1 Database
+    "d1_databases": [
+        {
+            "binding": "DB",
+            "database_name": "his_database",
+            "database_id": "f79d9487-fd6e-45e0-aaf1-ea9f2a69493d"
+        }
+    ],
+    // KV for caching
+    "kv_namespaces": [
+        {
+            "binding": "LINC_CACHE",
+            "id": "b7dda6ce2c104c679d19f40d36b9596c"
+        }
+    ],
+    // Workers AI
+    "ai": {
+        "binding": "AI"
+    },
+    // Environment variables
+    "vars": {
+        "ENVIRONMENT": "production"
+    },
+    // Observability
+    "observability": {
+        "enabled": true,
+        "head_sampling_rate": 1.0
+    }
+}
