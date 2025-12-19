@@ -4,7 +4,7 @@ import { setupDevPlatform } from '@cloudflare/next-on-pages/next-dev';
 const nextConfig = {
   reactStrictMode: true,
   env: {
-    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'https://givc-core-academy-backend.brainsait-fadil.workers.dev',
+    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'https://givc-core-academy-unified.brainsait-fadil.workers.dev',
   },
 };
 
