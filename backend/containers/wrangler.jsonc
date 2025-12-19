@@ -10,7 +10,7 @@
     "containers": [
         {
             "class_name": "LincContainer",
-            "image": "./container_src/Dockerfile",
+            "image": "registry.cloudflare.com/brainsait-linc-platform-masterlinccontainer:c6f5c165",
             "max_instances": 5
         }
     ],
@@ -28,6 +28,26 @@
                 "LincContainer"
             ],
             "tag": "v1"
+        }
+    ],
+    "workflows": [
+        {
+            "name": "claims-workflow",
+            "binding": "CLAIMS_WORKFLOW",
+            "class_name": "ClaimsWorkflow",
+            "script_name": "givc-linc-workflows"
+        },
+        {
+            "name": "audit-workflow",
+            "binding": "AUDIT_WORKFLOW",
+            "class_name": "AuditWorkflow",
+            "script_name": "givc-linc-workflows"
+        },
+        {
+            "name": "learning-workflow",
+            "binding": "LEARNING_WORKFLOW",
+            "class_name": "LearningWorkflow",
+            "script_name": "givc-linc-workflows"
         }
     ],
     "d1_databases": [

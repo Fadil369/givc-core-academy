@@ -1,15 +1,20 @@
 /**
  * GIVC Core Academy + LINC Agents - Cloudflare Containers Worker
  * Container-enabled Worker that routes requests to the Python FastAPI container
- * 
- * Note: Cloudflare Containers are in beta. This worker uses the Container class
- * from the cloudflare:container module.
+ * and integrates with Cloudflare Workflows.
  */
+
+import { Workflow } from '@cloudflare/workers-types';
 
 export interface Env {
   LINC_CONTAINER: DurableObjectNamespace;
   ENVIRONMENT?: string;
   DB?: D1Database;
+  
+  // Workflow bindings
+  CLAIMS_WORKFLOW?: Workflow;
+  AUDIT_WORKFLOW?: Workflow;
+  LEARNING_WORKFLOW?: Workflow;
 }
 
 // CORS headers
@@ -22,7 +27,6 @@ const CORS_HEADERS: Record<string, string> = {
 
 /**
  * Container Durable Object class
- * This class wraps the container and handles lifecycle events
  */
 export class LincContainer {
   private state: DurableObjectState;
@@ -36,7 +40,12 @@ export class LincContainer {
   async fetch(request: Request): Promise<Response> {
     const url = new URL(request.url);
     
-    // Container is accessed at localhost:8080 within the Durable Object
+    // Intercept Workflow requests
+    if (url.pathname.startsWith('/api/workflows/')) {
+      return this.handleWorkflowRequest(request, url);
+    }
+    
+    // Forward everything else to Container at localhost:8080
     const containerUrl = `http://localhost:8080${url.pathname}${url.search}`;
     
     try {
@@ -46,10 +55,8 @@ export class LincContainer {
         body: request.body,
       });
 
-      // Forward to container
       const response = await fetch(containerRequest);
       
-      // Add CORS headers
       const newResponse = new Response(response.body, response);
       Object.entries(CORS_HEADERS).forEach(([key, value]) => {
         newResponse.headers.set(key, value);
@@ -58,10 +65,50 @@ export class LincContainer {
       return newResponse;
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "Unknown error";
+      // Fallback: if container is down, check if we can handle via workflow
       return new Response(
-        JSON.stringify({ error: "Container error", message: errorMessage }),
+        JSON.stringify({ 
+          error: "Container error", 
+          message: errorMessage,
+          hint: "Try /api/workflows/* endpoints for durable execution" 
+        }),
         { status: 503, headers: { "Content-Type": "application/json", ...CORS_HEADERS } }
       );
+    }
+  }
+  
+  async handleWorkflowRequest(request: Request, url: URL): Promise<Response> {
+    const path = url.pathname;
+    let workflowInstance;
+    
+    try {
+      const payload = await request.json();
+      
+      if (path.includes('/claims') && this.env.CLAIMS_WORKFLOW) {
+        workflowInstance = await this.env.CLAIMS_WORKFLOW.create({ params: payload });
+      } else if (path.includes('/audit') && this.env.AUDIT_WORKFLOW) {
+        workflowInstance = await this.env.AUDIT_WORKFLOW.create({ params: payload });
+      } else if (path.includes('/learning') && this.env.LEARNING_WORKFLOW) {
+        workflowInstance = await this.env.LEARNING_WORKFLOW.create({ params: payload });
+      } else {
+         return new Response(JSON.stringify({ error: "Workflow not found or disabled" }), {
+           status: 404, headers: { "Content-Type": "application/json", ...CORS_HEADERS }
+         });
+      }
+      
+      return new Response(JSON.stringify({
+        status: "started",
+        workflowId: workflowInstance.id,
+        timestamp: new Date().toISOString()
+      }), {
+        status: 202,
+        headers: { "Content-Type": "application/json", ...CORS_HEADERS }
+      });
+      
+    } catch (e: any) {
+      return new Response(JSON.stringify({ error: e.message }), {
+        status: 500, headers: { "Content-Type": "application/json", ...CORS_HEADERS }
+      });
     }
   }
 }
@@ -69,7 +116,6 @@ export class LincContainer {
 // Main Worker
 export default {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
-    // Handle CORS preflight
     if (request.method === "OPTIONS") {
       return new Response(null, { headers: CORS_HEADERS });
     }
@@ -78,49 +124,42 @@ export default {
     const path = url.pathname;
 
     try {
-      // Edge-level health check
       if (path === "/health" || path === "/") {
         return jsonResponse({
           status: "healthy",
           service: "givc-linc-agents-container",
-          edge: "cloudflare",
-          environment: env.ENVIRONMENT || "production",
+          deployment: "container-workflow-hybrid",
           timestamp: new Date().toISOString(),
           endpoints: {
-            audit: "POST /api/audit/simulate",
-            learning: "POST /api/learning/path",
-            claims: "POST /api/v1/claims/analyze",
-            translate: "POST /api/v1/translate",
-            orchestrate: "POST /api/v1/orchestrate",
+             container_api: "/* (forwarded to container)",
+             workflows: {
+               claims: "POST /api/workflows/claims",
+               audit: "POST /api/workflows/audit",
+               learning: "POST /api/workflows/learning"
+             }
           },
         });
       }
 
-      // Get container instance using a consistent ID
       const containerId = env.LINC_CONTAINER.idFromName("linc-agents-primary");
       const container = env.LINC_CONTAINER.get(containerId);
 
-      // Forward the request to the container
       const containerRequest = new Request(request.url, {
         method: request.method,
         headers: request.headers,
         body: request.body,
       });
 
-      // Add edge headers
       containerRequest.headers.set("X-Edge-Location", "cloudflare-container");
       containerRequest.headers.set("X-Forwarded-For", request.headers.get("CF-Connecting-IP") || "");
-      containerRequest.headers.set("X-Request-ID", crypto.randomUUID());
 
-      // Forward to container Durable Object
       const response = await container.fetch(containerRequest);
 
-      // Add CORS headers to response
       const newResponse = new Response(response.body, response);
       Object.entries(CORS_HEADERS).forEach(([key, value]) => {
         newResponse.headers.set(key, value);
       });
-      newResponse.headers.set("X-Served-By", "cloudflare-container");
+      newResponse.headers.set("X-Served-By", "cloudflare-container-hybrid");
 
       return newResponse;
 
@@ -129,7 +168,7 @@ export default {
       console.error("Worker error:", error);
       
       return jsonResponse({
-        error: "Container service error",
+        error: "Service error",
         message: errorMessage,
         timestamp: new Date().toISOString(),
       }, 503);
