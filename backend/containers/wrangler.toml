@@ -1,0 +1,48 @@
+# GIVC Core Academy + LINC Agents - Cloudflare Containers Configuration
+name = "givc-linc-agents-container"
+main = "src/index.ts"
+compatibility_date = "2024-12-14"
+compatibility_flags = ["nodejs_compat"]
+
+# Account Configuration  
+account_id = "d7b99530559ab4f2545e9bdc72a7ab9b"
+
+# Enable workers.dev subdomain
+workers_dev = true
+
+# ============================================================================
+# D1 DATABASE
+# ============================================================================
+[[d1_databases]]
+binding = "DB"
+database_name = "his_database"
+database_id = "f79d9487-fd6e-45e0-aaf1-ea9f2a69493d"
+
+# ============================================================================
+# ENVIRONMENT VARIABLES  
+# ============================================================================
+[vars]
+ENVIRONMENT = "production"
+API_VERSION = "v1"
+
+# Backend Agent URLs
+MASTERLINC_URL = "https://masterlinc.elfadil.com"
+HEALTHCARELINC_URL = "https://healthcarelinc.elfadil.com"
+CLAIMLINC_URL = "https://claimlinc.elfadil.com"
+TTLINC_URL = "https://ttlinc.elfadil.com"
+POLICYLINC_URL = "https://policylinc.elfadil.com"
+CLINICALLINC_URL = "https://clinicallinc.elfadil.com"
+RADIOLINC_URL = "https://radiolinc.elfadil.com"
+
+# ============================================================================
+# OBSERVABILITY
+# ============================================================================
+[observability]
+enabled = true
+head_sampling_rate = 1.0
+
+# ============================================================================
+# LIMITS
+# ============================================================================
+[limits]
+cpu_ms = 50

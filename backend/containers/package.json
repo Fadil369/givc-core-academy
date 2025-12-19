@@ -1,0 +1,22 @@
+{
+  "name": "givc-linc-agents-container",
+  "version": "1.0.0",
+  "description": "GIVC Core Academy + LINC Agents on Cloudflare Containers",
+  "main": "src/index.ts",
+  "scripts": {
+    "dev": "wrangler dev",
+    "build": "tsc",
+    "deploy": "wrangler deploy",
+    "deploy:container": "wrangler deploy --env container",
+    "container:build": "docker build -t givc-linc-agents ./container_src",
+    "container:push": "docker push givc-linc-agents",
+    "logs": "wrangler tail"
+  },
+  "dependencies": {
+    "@cloudflare/workers-types": "^4.20241218.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3",
+    "wrangler": "^4.0.0"
+  }
+}

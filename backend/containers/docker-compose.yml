@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  # GIVC Core Academy + LINC Agents - Unified API
+  givc-linc-api:
+    build:
+      context: ./container_src
+      dockerfile: Dockerfile
+    container_name: givc-linc-agents
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      - APP_ENV=production
+      - PORT=8080
+      - DEBUG=false
+      # LINC Agent URLs (for container communication if needed)
+      - MASTERLINC_URL=https://masterlinc.elfadil.com
+      - HEALTHCARELINC_URL=https://healthcarelinc.elfadil.com
+      - CLAIMLINC_URL=https://claimlinc.elfadil.com
+      - TTLINC_URL=https://ttlinc.elfadil.com
+      - POLICYLINC_URL=https://policylinc.elfadil.com
+      - CLINICALLINC_URL=https://clinicallinc.elfadil.com
+      - RADIOLINC_URL=https://radiolinc.elfadil.com
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    networks:
+      - givc-network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.givc-api.rule=Host(`api.givc.elfadil.com`)"
+      - "traefik.http.routers.givc-api.entrypoints=websecure"
+      - "traefik.http.routers.givc-api.tls.certresolver=letsencrypt"
+      - "traefik.http.services.givc-api.loadbalancer.server.port=8080"
+
+networks:
+  givc-network:
+    driver: bridge
