@@ -1,18 +1,34 @@
+'use client';
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import i18n, { getDirection } from '../services/localization/i18n';
 
 const LanguageContext = createContext();
 
-export const LanguageProvider = ({ children }) => {
-  const [language, setLanguage] = useState(() => {
+// Helper to safely access localStorage
+const getStoredLanguage = () => {
+  if (typeof window !== 'undefined') {
     return localStorage.getItem('preferred_language') || 'en';
-  });
+  }
+  return 'en';
+};
+
+export const LanguageProvider = ({ children }) => {
+  const [language, setLanguage] = useState('en');
+  const [direction, setDirection] = useState('ltr');
+  const [mounted, setMounted] = useState(false);
   
-  const [direction, setDirection] = useState(() => {
-    return getDirection(localStorage.getItem('preferred_language') || 'en');
-  });
+  // Initialize on client side only
+  useEffect(() => {
+    const storedLang = getStoredLanguage();
+    setLanguage(storedLang);
+    setDirection(getDirection(storedLang));
+    setMounted(true);
+  }, []);
   
   useEffect(() => {
+    if (!mounted) return;
+    
     // Update i18n
     i18n.changeLanguage(language);
     
@@ -35,7 +51,7 @@ export const LanguageProvider = ({ children }) => {
     
     // Save preference
     localStorage.setItem('preferred_language', language);
-  }, [language]);
+  }, [language, mounted]);
   
   const toggleLanguage = () => {
     setLanguage(prev => prev === 'en' ? 'ar' : 'en');

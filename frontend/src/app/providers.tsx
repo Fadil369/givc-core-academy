@@ -5,7 +5,7 @@ import { useState } from 'react'
 import { LanguageProvider } from '@/contexts/LanguageContext'
 import { AuthProvider } from '@/contexts/AuthContext'
 import '@/services/localization/i18n'
-import '@/styles/rtl.scss'
+import '@/styles/rtl.css'
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(() => new QueryClient({

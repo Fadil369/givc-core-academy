@@ -2,8 +2,124 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Import SCSS brand system */
-@import "./scss/abstracts/_brand-config.scss";
-@import "./scss/abstracts/_helpers.scss";
-@import "./scss/abstracts/_theme.scss";
-@import "./scss/components/_button.scss";
+/* GIVC Core Academy Brand Theme */
+:root {
+  /* Core Brand Colors */
+  --bcc-primary: #0a2463;
+  --bcc-secondary: #00b4d8;
+  --bcc-accent: #ff6b35;
+  --bcc-success: #2a9d8f;
+  --bcc-light: #f8f9fa;
+  --bcc-dark: #212529;
+  
+  /* Saudi & Medical Theme */
+  --bcc-saudi-green: #006c35;
+  --bcc-medical-teal: #20a4f3;
+  --bcc-regulatory-red: #e63946;
+  
+  /* Typography */
+  --bcc-font-ar: 'Cairo', 'Arial', sans-serif;
+  --bcc-font-en: 'Inter', 'Helvetica Neue', sans-serif;
+  --bcc-base-fs: 16px;
+  
+  /* Spacing & Borders */
+  --bcc-radius: 8px;
+  --bcc-shadow: 0 4px 12px rgba(10, 36, 99, 0.1);
+}
+
+/* Primary Midnight (#0A2463) */
+.bg-primary-midnight { background-color: var(--bcc-primary); }
+.text-primary-midnight { color: var(--bcc-primary); }
+
+/* Medical Teal (#20A4F3) */
+.bg-primary-medical { background-color: var(--bcc-medical-teal); }
+.text-primary-medical { color: var(--bcc-medical-teal); }
+
+/* Signal Blue (#00B4D8) */
+.bg-primary-signal { background-color: var(--bcc-secondary); }
+.text-primary-signal { color: var(--bcc-secondary); }
+
+/* Success Green */
+.bg-accent-successGreen { background-color: var(--bcc-success); }
+.text-accent-successGreen { color: var(--bcc-success); }
+
+/* Saudi Green */
+.bg-saudi-green { background-color: var(--bcc-saudi-green); }
+.text-saudi-green { color: var(--bcc-saudi-green); }
+
+/* Button Component */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 1rem;
+  font-family: var(--bcc-font-en);
+  font-size: 1rem;
+  font-weight: 600;
+  color: #fff;
+  background: var(--bcc-primary);
+  border-radius: var(--bcc-radius);
+  box-shadow: var(--bcc-shadow);
+  transition: background 0.2s ease, transform 0.1s ease;
+  cursor: pointer;
+  border: none;
+}
+
+.btn:hover {
+  background: var(--bcc-secondary);
+  transform: translateY(-2px);
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+.btn-accent {
+  background: var(--bcc-accent);
+}
+
+.btn-success {
+  background: var(--bcc-success);
+}
+
+.btn-outline {
+  background: transparent;
+  border: 2px solid var(--bcc-primary);
+  color: var(--bcc-primary);
+}
+
+.btn-outline:hover {
+  background: var(--bcc-primary);
+  color: #fff;
+}
+
+/* Arabic Font Support */
+.font-arabic {
+  font-family: var(--bcc-font-ar);
+}
+
+/* RTL Support */
+[dir="rtl"] {
+  direction: rtl;
+  text-align: right;
+}
+
+[dir="rtl"] .font-arabic {
+  font-family: var(--bcc-font-ar);
+}
+
+/* Card Component */
+.card {
+  background: white;
+  border-radius: var(--bcc-radius);
+  box-shadow: var(--bcc-shadow);
+  padding: 1.5rem;
+}
+
+/* Glassmorphism */
+.glass {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}

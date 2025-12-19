@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "pages:build": "npx @cloudflare/next-on-pages",
     "test": "jest"
   },
   "dependencies": {
@@ -21,10 +22,10 @@
     "clsx": "^2.1.0",
     "i18next": "^23.7.16",
     "i18next-browser-languagedetector": "^8.2.0",
-    "lucide-react": "^0.309.0",
-    "next": "14.1.0",
-    "react": "18.2.0",
-    "react-dom": "18.2.0",
+    "lucide-react": "^0.562.0",
+    "next": "^15.0.0",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3",
     "react-i18next": "^14.0.0",
     "sass": "^1.97.0",
     "tailwind-merge": "^2.2.0",
@@ -32,6 +33,7 @@
     "zustand": "^4.5.0"
   },
   "devDependencies": {
+    "@cloudflare/next-on-pages": "^1.13.16",
     "@types/node": "20.11.5",
     "@types/react": "18.2.48",
     "@types/react-dom": "18.2.18",
@@ -42,6 +44,7 @@
     "eslint-config-next": "14.1.0",
     "postcss": "8.4.33",
     "tailwindcss": "3.4.1",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "wrangler": "^4.56.0"
   }
 }
