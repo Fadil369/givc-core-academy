@@ -34,7 +34,7 @@ class RadiologyReportRequest(BaseModel):
     study_date: datetime = Field(default_factory=datetime.utcnow)
 
 
-class RadiologyReportResponse(BaseModel, TimestampMixin):
+class RadiologyReportResponse(TimestampMixin):
     """Response from radiology report analysis"""
     
     request_id: UUID
@@ -64,7 +64,7 @@ class DicomAnalysisRequest(BaseModel):
     dicom_file_url: Optional[str] = None
 
 
-class DicomAnalysisResponse(BaseModel, TimestampMixin):
+class DicomAnalysisResponse(TimestampMixin):
     """Response from DICOM analysis"""
     
     request_id: UUID

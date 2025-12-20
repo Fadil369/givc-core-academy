@@ -137,7 +137,7 @@ class TranslationRequest(BaseModel):
     metadata: Dict[str, Any] = Field(default_factory=dict)
 
 
-class TranslationResponse(BaseModel, TimestampMixin):
+class TranslationResponse(TimestampMixin):
     """Response from translation service"""
     
     translation_id: UUID = Field(default_factory=uuid4)

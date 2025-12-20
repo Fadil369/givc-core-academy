@@ -178,7 +178,7 @@ class PaginatedResponse(BaseModel):
         )
 
 
-class AuditLog(BaseModel, TimestampMixin):
+class AuditLog(TimestampMixin):
     """Audit log entry for HIPAA compliance"""
     
     id: UUID = Field(default_factory=uuid4)
