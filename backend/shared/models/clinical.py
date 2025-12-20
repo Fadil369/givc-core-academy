@@ -33,7 +33,7 @@ class ClinicalDecisionRequest(BaseModel):
     current_medications: List[str] = Field(default_factory=list)
 
 
-class ClinicalDecisionResponse(BaseModel, TimestampMixin):
+class ClinicalDecisionResponse(TimestampMixin):
     """Response from clinical decision support"""
     
     request_id: UUID
@@ -57,7 +57,7 @@ class DrugInteractionCheck(BaseModel):
     medications: List[str]
 
 
-class DrugInteractionResponse(BaseModel, TimestampMixin):
+class DrugInteractionResponse(TimestampMixin):
     """Response from drug interaction check"""
     
     request_id: UUID
@@ -82,7 +82,7 @@ class CarePathwayRequest(BaseModel):
     comorbidities: List[str] = Field(default_factory=list)
 
 
-class CarePathwayResponse(BaseModel, TimestampMixin):
+class CarePathwayResponse(TimestampMixin):
     """Response with care pathway"""
     
     request_id: UUID

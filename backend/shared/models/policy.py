@@ -33,7 +33,7 @@ class CoverageRule(BaseModel):
     requires_prior_auth: bool = False
 
 
-class PolicyDocument(BaseModel, TimestampMixin):
+class PolicyDocument(TimestampMixin):
     """Insurance policy document"""
     
     document_id: UUID = Field(default_factory=uuid4)
@@ -57,7 +57,7 @@ class PolicyInterpretationRequest(BaseModel):
     specific_questions: List[str] = Field(default_factory=list)
 
 
-class PolicyInterpretationResponse(BaseModel, TimestampMixin):
+class PolicyInterpretationResponse(TimestampMixin):
     """Response from policy interpretation"""
     
     request_id: UUID
@@ -85,7 +85,7 @@ class CoverageCheckRequest(BaseModel):
     diagnosis_codes: List[str] = Field(default_factory=list)
 
 
-class CoverageCheckResponse(BaseModel, TimestampMixin):
+class CoverageCheckResponse(TimestampMixin):
     """Response from coverage check"""
     
     request_id: UUID

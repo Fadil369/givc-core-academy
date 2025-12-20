@@ -103,7 +103,7 @@ class ContactPoint(BaseModel):
     rank: Optional[int] = None
 
 
-class Patient(BaseModel, TimestampMixin):
+class Patient(TimestampMixin):
     """Patient resource - FHIR R4 compatible"""
     
     id: UUID = Field(default_factory=uuid4)
@@ -136,7 +136,7 @@ class Patient(BaseModel, TimestampMixin):
     metadata: Dict[str, Any] = Field(default_factory=dict)
 
 
-class Encounter(BaseModel, TimestampMixin):
+class Encounter(TimestampMixin):
     """Encounter resource - Healthcare interaction"""
     
     id: UUID = Field(default_factory=uuid4)
@@ -171,7 +171,7 @@ class Encounter(BaseModel, TimestampMixin):
     metadata: Dict[str, Any] = Field(default_factory=dict)
 
 
-class Observation(BaseModel, TimestampMixin):
+class Observation(TimestampMixin):
     """Observation resource - Clinical findings"""
     
     id: UUID = Field(default_factory=uuid4)
@@ -203,7 +203,7 @@ class Observation(BaseModel, TimestampMixin):
     note_en: Optional[str] = None
 
 
-class MedicationRequest(BaseModel, TimestampMixin):
+class MedicationRequest(TimestampMixin):
     """Medication request/prescription"""
     
     id: UUID = Field(default_factory=uuid4)
@@ -233,7 +233,7 @@ class MedicationRequest(BaseModel, TimestampMixin):
     note_en: Optional[str] = None
 
 
-class DiagnosticReport(BaseModel, TimestampMixin):
+class DiagnosticReport(TimestampMixin):
     """Diagnostic report - Lab results, imaging reports"""
     
     id: UUID = Field(default_factory=uuid4)

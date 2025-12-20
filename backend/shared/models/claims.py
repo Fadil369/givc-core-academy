@@ -113,7 +113,7 @@ class Diagnosis(BaseModel):
     on_admission: Optional[bool] = None
 
 
-class Claim(BaseModel, TimestampMixin):
+class Claim(TimestampMixin):
     """Healthcare claim - NPHIES compatible"""
     
     id: UUID = Field(default_factory=uuid4)
@@ -172,7 +172,7 @@ class Claim(BaseModel, TimestampMixin):
     metadata: Dict[str, Any] = Field(default_factory=dict)
 
 
-class ClaimResponse(BaseModel, TimestampMixin):
+class ClaimResponse(TimestampMixin):
     """Response from payer for a claim"""
     
     id: UUID = Field(default_factory=uuid4)
